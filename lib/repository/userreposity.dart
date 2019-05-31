@@ -26,7 +26,6 @@ class UserRepository extends ApiBase {
           "Error connecting to Server. Please check you mobile nextwork.");
     }
     var resp = jsonDecode(response.body);
-    print(response.statusCode);
     String _token = "";
     if (resp['ok'] == "yes") {
       try {

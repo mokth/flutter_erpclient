@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:erpclient/pages/Settings/setting.dart';
+import 'package:erpclient/relocate/receive-list.dart';
 import 'package:flutter/material.dart';
 
 import 'package:erpclient/base/connectionStatusSingleton.dart';
@@ -208,6 +209,13 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   new CustomRoute(builder: (context) => new RelocateList()),
+                );
+              }),
+              Divider(),
+              menuItem('Recieve', () {
+                Navigator.push(
+                  context,
+                  new CustomRoute(builder: (context) => new ReceiveList()),
                 );
               }),
             ],

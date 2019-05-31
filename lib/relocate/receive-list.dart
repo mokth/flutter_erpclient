@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import 'package:erpclient/relocate/receive.dart';
 import 'package:erpclient/base/customroute.dart';
-import 'package:erpclient/relocate/relocate.dart';
 import 'package:erpclient/utilities/displayutil.dart';
 import 'package:erpclient/utilities/util.dart';
 import 'package:erpclient/repository/inventoryrepo.dart';
@@ -10,13 +10,13 @@ import 'package:erpclient/model/relocate.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
 
-class RelocateList extends StatefulWidget {
-  RelocateList({Key key}) : super(key: key);
+class ReceiveList extends StatefulWidget {
+  ReceiveList({Key key}) : super(key: key);
 
-  _RelocateListState createState() => _RelocateListState();
+  _ReceiveListState createState() => _ReceiveListState();
 }
 
-class _RelocateListState extends State<RelocateList> {
+class _ReceiveListState extends State<ReceiveList> {
   final InventoryRepository _repo = new InventoryRepository();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
@@ -34,7 +34,7 @@ class _RelocateListState extends State<RelocateList> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Relocate List'),
+        title: Text('Receive List'),
       ),
       floatingActionButton: (!_dataAvailable)
           ? Text('')
@@ -44,7 +44,7 @@ class _RelocateListState extends State<RelocateList> {
                 Navigator.push(
                   context,
                   new CustomRoute(
-                      builder: (context) => RelocateEntry(null, "NEW")),
+                      builder: (context) => ReceiveEmtry()),
                 );
               },
               backgroundColor: Colors.pinkAccent,
@@ -57,7 +57,7 @@ class _RelocateListState extends State<RelocateList> {
         decoration: BoxDecoration(color: Colors.white),
         child: FutureBuilder(
             initialData: new List<Relocate>(),
-            future: _repo.getRelocates(),
+            future: _repo.getRelocates(showAll: true),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
@@ -167,43 +167,24 @@ class _RelocateListState extends State<RelocateList> {
             ],
           ),
         ),
-        actions: <Widget>[
-          new IconSlideAction(
-              caption: 'EDIT',
-              color: Colors.blueAccent,
-              icon: Icons.edit,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  new CustomRoute(
-                      builder: (context) => RelocateEntry(item, "EDIT")),
-                );
-              }),
-        ],
-        secondaryActions: <Widget>[
-          new IconSlideAction(
-              caption: 'DELETE',
-              color: Colors.redAccent,
-              icon: Icons.delete,
-              onTap: () {
-                deleteIem(item);
-              }),
-        ],
+        // actions: <Widget>[
+        //   new IconSlideAction(
+        //       caption: 'EDIT',
+        //       color: Colors.blueAccent,
+        //       icon: Icons.edit,
+        //       onTap: () {
+        //         testReceive(item).then((msg)=>showSnackBar(msg));
+        //       }),
+        // ],
+       
       ),
     );
   }
 
-  deleteIem(Relocate item) {
-    _asyncConfirmDialog(context).then((val) {
-      if (val == ConfirmAction.ACCEPT) {
-        _repo.deleteRelocate(item.id).then((resp) {
-          setState(() {});
-        }, onError: (e) {
-          print(e.toString());
-          showSnackBar("Error deleting record...");
-        });
-      }
-    });
+  Future<String> testReceive(Relocate item) async{
+    String id = item.id.toString();
+     var msg =await _repo.postReceive(id);
+     return msg;
   }
 
   showSnackBar(String msg) {
@@ -215,30 +196,4 @@ class _RelocateListState extends State<RelocateList> {
     );
   }
 
-  Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
-    return showDialog<ConfirmAction>(
-      context: context,
-      barrierDismissible: false, // user must tap button for close dialog!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Warning'),
-          content: const Text('Confirm to delete this record?'),
-          actions: <Widget>[
-            FlatButton(
-              child: const Text('CANCEL'),
-              onPressed: () {
-                Navigator.of(context).pop(ConfirmAction.CANCEL);
-              },
-            ),
-            FlatButton(
-              child: const Text('CONFIRM'),
-              onPressed: () {
-                Navigator.of(context).pop(ConfirmAction.ACCEPT);
-              },
-            )
-          ],
-        );
-      },
-    );
-  }
 }

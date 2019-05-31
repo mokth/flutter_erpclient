@@ -10,6 +10,7 @@ class Relocate {
   final String userid;
   final String status;
   final DateTime trxdate;
+  final String qrcoderef;
 
   Relocate(
       {
@@ -23,7 +24,8 @@ class Relocate {
       this.towh,
       this.userid,
       this.status,
-      this.trxdate});
+      this.trxdate,
+      this.qrcoderef});
 
   Map<String, dynamic> toJson(Relocate instance, String userid) =>
       <String, dynamic>{
@@ -37,6 +39,7 @@ class Relocate {
         'towh': instance.towh,
         'userid': userid,
         'status': instance.status,
+        'qrcoderef':instance.qrcoderef,
         'trxdate': instance.trxdate.toIso8601String()
       };
 
@@ -51,6 +54,7 @@ class Relocate {
       stdqty: json['stdqty'],
       fromwh: json["fromwh"] as String,
       towh: json["towh"] as String,
+      qrcoderef:(json['qrcoderef']==null)?"": json['qrcoderef']as String,
       status: json["status"] as String,
     );
   }

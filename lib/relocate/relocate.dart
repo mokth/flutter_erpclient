@@ -12,7 +12,7 @@ import 'dart:async';
 class RelocateEntry extends StatefulWidget {
   final Relocate relocate;
   final String editmode;
-  RelocateEntry(this.relocate,this.editmode,{Key key}) : super(key: key);
+  RelocateEntry(this.relocate, this.editmode, {Key key}) : super(key: key);
 
   _RelocateState createState() => _RelocateState();
 }
@@ -23,65 +23,89 @@ class _RelocateState extends State<RelocateEntry> {
   final _partController = TextEditingController();
   final _cartonController = TextEditingController();
   final _qtyController = TextEditingController();
+  final _recqtyController = TextEditingController();
   final _frwhController = TextEditingController();
   final _towhController = TextEditingController();
+
   ScopedLookup<Warehouse> scopefrwh;
   ScopedLookup<Warehouse> scopetowh;
   String barcode = "";
   String _partname;
   List<Warehouse> _warehouses;
-  bool _isWhfound =false;
+  bool _isWhfound = false;
   Relocate _relocate;
   int _noOfCarton;
   int _cartonPackSize;
+  int _totalQty;
   bool _editMode;
 
   @override
   void initState() {
     super.initState();
-     _editMode = widget.editmode=="EDIT";
-    if (_editMode){
-      _relocate =widget.relocate;
+    _editMode = widget.editmode == "EDIT";
+    if (_editMode) {
+      _relocate = widget.relocate;
       loadData();
     }
     scopefrwh = ScopedLookup(_frwhController);
     scopetowh = ScopedLookup(_towhController);
     onFrWhCodeChanged();
     onToWhCodeChanged();
-    repo.getWarehouse().then((resp){
-       setState(() {
-          this._warehouses =resp;  
-       print(this._warehouses.length);
-        _isWhfound =true;  
-       });       
-    },
-    onError: (e){
+    onQtyControllerChanged();
+    repo.getWarehouse().then((resp) {
+      setState(() {
+        this._warehouses = resp;
+        print(this._warehouses.length);
+        _isWhfound = true;
+      });
+    }, onError: (e) {
       print(e.toString());
-     }
-    );
+    });
   }
 
-  loadData(){
+  loadData() {
     _partController.text = _relocate.icode;
-    _cartonController.text = _relocate.packsize.toString()+" PCS";
+    _cartonController.text = _relocate.packsize.toString() + " PCS";
     _cartonPackSize = _relocate.packsize;
     _frwhController.text = _relocate.fromwh;
     _towhController.text = _relocate.towh;
     _partname = _relocate.idesc;
     _qtyController.text = _relocate.qty.toString();
-
+    _recqtyController.text = _relocate.stdqty.toString();
   }
-  onFrWhCodeChanged(){
-     _frwhController.addListener(() {
-       if (_frwhController.text!="")
-          Navigator.pop(context);
+
+  onFrWhCodeChanged() {
+    _frwhController.addListener(() {
+      if (_frwhController.text != "") Navigator.pop(context);
     });
   }
 
-   onToWhCodeChanged(){
-     _towhController.addListener(() {
-       if (_towhController.text!="")
-          Navigator.pop(context);
+  onToWhCodeChanged() {
+    _towhController.addListener(() {
+      if (_towhController.text != "") Navigator.pop(context);
+    });
+  }
+
+  onQtyControllerChanged() {
+    _qtyController.addListener(() {
+      if (_qtyController.text == "") {
+        return false;
+      }
+      List<String> _temp = _cartonController.text.trim().split(' ');
+      if (_temp.length <= 1) {
+        return false;
+      }
+      _cartonPackSize = int.tryParse(_temp[0]);
+      if (_cartonPackSize == null) {
+        return false;
+      }
+      _noOfCarton = int.tryParse(_qtyController.text);
+      if (_noOfCarton == null) {
+        return false;
+      }
+      int ttlqty= (_noOfCarton * _cartonPackSize);
+      _recqtyController.text= ttlqty.toString();
+
     });
   }
 
@@ -114,14 +138,14 @@ class _RelocateState extends State<RelocateEntry> {
 
   Widget scanner() {
     return new RawMaterialButton(
-      onPressed:(){ 
-          if (!_editMode){
-            scan();
-          }
-        },
+      onPressed: () {
+        if (!_editMode) {
+          scan();
+        }
+      },
       child: new Icon(
         Icons.scanner,
-        color: (_editMode)?Theme.of(context).disabledColor:Colors.blue,
+        color: (_editMode) ? Theme.of(context).disabledColor : Colors.blue,
         size: 50.0,
       ),
       shape: new CircleBorder(),
@@ -153,12 +177,22 @@ class _RelocateState extends State<RelocateEntry> {
             controller: _cartonController,
           ),
           TextFormField(
-            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: false),
+            keyboardType:
+                TextInputType.numberWithOptions(signed: false, decimal: false),
             decoration: InputDecoration(
                 labelText: 'Number of Carton (D)',
                 filled: true,
                 fillColor: Colors.white),
             controller: _qtyController,
+          ),
+          TextFormField(
+            keyboardType:
+                TextInputType.numberWithOptions(signed: false, decimal: false),
+            decoration: InputDecoration(
+                labelText: 'Total Qty (PCS)',
+                filled: true,
+                fillColor: Colors.white),
+            controller: _recqtyController,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -174,14 +208,16 @@ class _RelocateState extends State<RelocateEntry> {
               ),
               GestureDetector(
                 onTap: () {
-                  if (_isWhfound){
-                      showfrWhLookup();
-                  }                  
+                  if (_isWhfound) {
+                    showfrWhLookup();
+                  }
                 },
                 child: Icon(
                   Icons.arrow_drop_down_circle,
                   size: 32,
-                  color:_isWhfound?Theme.of(context).accentColor:Theme.of(context).disabledColor,
+                  color: _isWhfound
+                      ? Theme.of(context).accentColor
+                      : Theme.of(context).disabledColor,
                 ),
               ),
             ],
@@ -200,14 +236,16 @@ class _RelocateState extends State<RelocateEntry> {
               ),
               GestureDetector(
                 onTap: () {
-                    if (_isWhfound){
-                      showtoWhLookup();
-                  }    
+                  if (_isWhfound) {
+                    showtoWhLookup();
+                  }
                 },
                 child: Icon(
                   Icons.arrow_drop_down_circle,
                   size: 32,
-                 color:_isWhfound?Theme.of(context).accentColor:Theme.of(context).disabledColor,
+                  color: _isWhfound
+                      ? Theme.of(context).accentColor
+                      : Theme.of(context).disabledColor,
                 ),
               ),
             ],
@@ -238,13 +276,13 @@ class _RelocateState extends State<RelocateEntry> {
         Expanded(
           child: RaisedButton(
             color: Colors.redAccent,
-            onPressed: (){
-                if (_editMode){
-                   Navigator.pop(context);
-                }else{
-                  resetForm();
-                }
-              },
+            onPressed: () {
+              if (_editMode) {
+                Navigator.pop(context);
+              } else {
+                resetForm();
+              }
+            },
             child: Text(
               'Cancel',
               style: TextStyle(
@@ -259,11 +297,11 @@ class _RelocateState extends State<RelocateEntry> {
   }
 
   showfrWhLookup() {
-     WHouseLookupDialog.showWarehouse(context,scopefrwh,_warehouses);
+    WHouseLookupDialog.showWarehouse(context, scopefrwh, _warehouses);
   }
 
   showtoWhLookup() {
-     WHouseLookupDialog.showWarehouse(context,scopetowh,_warehouses);
+    WHouseLookupDialog.showWarehouse(context, scopetowh, _warehouses);
   }
 
   Widget dispScanResult() {
@@ -332,112 +370,118 @@ class _RelocateState extends State<RelocateEntry> {
     // });
   }
 
-  bool validateInputs(){
-    if (_partController.text==""){
+  bool validateInputs() {
+    if (_partController.text == "") {
       showSnackBar('Invalid Part number...');
       return false;
     }
-    if (_cartonController.text==""){
+    if (_cartonController.text == "") {
       showSnackBar('Qty Per Carton is require...');
       return false;
     }
     List<String> _temp = _cartonController.text.trim().split(' ');
-    if (_temp.length <=1){
+    if (_temp.length <= 1) {
       showSnackBar('Invalid Qty Per Carton value...');
       return false;
     }
-    _cartonPackSize =int.tryParse(_temp[0]);
-    if (_cartonPackSize ==null){
+    _cartonPackSize = int.tryParse(_temp[0]);
+    if (_cartonPackSize == null) {
       showSnackBar('Invalid Qty Per Carton value...');
       return false;
     }
 
-    if (_qtyController.text==""){
+    if (_qtyController.text == "") {
       showSnackBar('Number of Carton is require...');
       return false;
     }
-   
-    _noOfCarton =int.tryParse(_qtyController.text);
-    if (_noOfCarton==null){
+
+    if (_recqtyController.text == "") {
+      showSnackBar('Total Qty is invalid...');
+      return false;
+    }
+    _totalQty = int.tryParse(_recqtyController.text);
+    if (_totalQty == null) {
+      showSnackBar('Total Qty is invalid...');
+      return false;
+    }
+
+    _noOfCarton = int.tryParse(_qtyController.text);
+    if (_noOfCarton == null) {
       showSnackBar('Invalid Number of Carton value...');
       return false;
     }
-    if (_frwhController.text==""){
-       showSnackBar('From Warehouse is require...');
+    if (_frwhController.text == "") {
+      showSnackBar('From Warehouse is require...');
       return false;
     }
-    if (_towhController.text==""){
+    if (_towhController.text == "") {
       showSnackBar('To Warehouse is require...');
       return false;
     }
     return true;
   }
-  
-  void saveRelocate(){
-    if (!validateInputs())
-      return;
-        
-    _relocate = new Relocate(icode: _partController.text,
-                             idesc: _partname,
-                             packsize: _cartonPackSize,
-                             qty: _noOfCarton,
-                             stdqty: (_noOfCarton * _cartonPackSize),
-                             fromwh: _frwhController.text,
-                             towh: _towhController.text,
-                             userid: '',
-                             trxdate: DateTime.now(),
-                             status: 'NEW',
-                             id: (_editMode)?_relocate.id:0,
-                             );
-     if(_editMode){
-        saveEdit();
-     }else{
-       saveNew();
-     }
+
+  void saveRelocate() {
+    if (!validateInputs()) return;
+     
+   
+    _relocate = new Relocate(
+      icode: _partController.text,
+      idesc: _partname,
+      packsize: _cartonPackSize,
+      qty: _noOfCarton,
+      stdqty:_totalQty,// (_noOfCarton * _cartonPackSize),
+      fromwh: _frwhController.text,
+      towh: _towhController.text,
+      userid: '',
+      trxdate: DateTime.now(),
+      status: 'NEW',
+      id: (_editMode) ? _relocate.id : 0,
+    );
+    if (_editMode) {
+      saveEdit();
+    } else {
+      saveNew();
+    }
   }
 
-  saveNew(){
-       repo.postRelocate(_relocate)
-      .then((resp){
-          showSnackBar(resp);
-          resetForm();
-      },
-      onError:(e){
-         showSnackBar("Error submitting data....");
-       }
-      ); 
+  saveNew() {
+    repo.postRelocate(_relocate).then((resp) {
+      showSnackBar(resp);
+      resetForm();
+    }, onError: (e) {
+      showSnackBar("Error submitting data....");
+    });
   }
 
-  saveEdit(){
-     repo.putRelocate(_relocate)
-      .then((resp){
-          showSnackBar(resp);
-          resetForm();
-          Navigator.pop(context);
-      },
-      onError:(e){
-         showSnackBar("Error updating data....");
-       }
-      ); 
+  saveEdit() {
+    repo.putRelocate(_relocate).then((resp) {
+      showSnackBar(resp);
+      resetForm();
+      Navigator.pop(context);
+    }, onError: (e) {
+      showSnackBar("Error updating data....");
+    });
   }
-  
-  void resetForm(){
+
+  void resetForm() {
     setState(() {
-        _partController.text="";
-        _cartonController.text ="";
-        _frwhController.text ="";
-        _towhController.text ="";
-        _qtyController.text ="";
-        barcode ="";
-        _partname="";
-        _noOfCarton=null;
-        _cartonPackSize = null;
-        _relocate = null;
+      _partController.text = "";
+      _cartonController.text = "";
+      _frwhController.text = "";
+      _towhController.text = "";
+      _qtyController.text = "";
+      _recqtyController.text = "";
+      barcode = "";
+      _partname = "";
+      _noOfCarton = null;
+      _cartonPackSize = null;
+      _relocate = null;
     });
   }
 
   showSnackBar(String msg) {
-     _scaffoldKey.currentState.showSnackBar(
+    _scaffoldKey.currentState.showSnackBar(
       SnackBar(
         content: Text(msg),
         backgroundColor: Colors.red,

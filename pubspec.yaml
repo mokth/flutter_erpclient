@@ -38,6 +38,7 @@ dependencies:
   flutter_bluetooth_serial: 0.0.4
   jaguar_query_sqflite: ^2.2.9
   connectivity: ^0.3.2
+  date_format: ^1.0.6
   
 dev_dependencies:
   flutter_test:

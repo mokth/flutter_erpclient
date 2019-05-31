@@ -29,7 +29,7 @@ class DisplayUtil {
     return Text(
       title,
       textAlign: textAlign,
-      style: TextStyle(fontSize: 15.0, fontWeight: fontWeight, color: color),
+      style: TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color),
     );
   }
 

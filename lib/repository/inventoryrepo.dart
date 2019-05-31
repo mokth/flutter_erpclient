@@ -38,15 +38,21 @@ class InventoryRepository extends ApiBase {
   }
 
   //get relocate list, using odata method
-  Future<List<Relocate>> getRelocates() async {
+  Future<List<Relocate>> getRelocates({bool showAll:false}) async {
     List<Relocate> _relocates = new List<Relocate>();
     String token = await getToken();
     User user = getAuthTokenInfo(token);
-
-    String url = apiURL +
-        "inventory/relocates?\$filter=userid eq '" +
-        user.id +
-        "' and status eq 'NEW'";
+    String url="";
+    if (showAll){
+      url = apiURL +
+            "inventory/relocates?\$filter=status eq 'NEW'";
+    }else{
+      url = apiURL +
+            "inventory/relocates?\$filter=userid eq '" +
+             user.id +
+            "' and status eq 'NEW'";
+    }
+    
 
     var response;
     try {
@@ -68,7 +74,7 @@ class InventoryRepository extends ApiBase {
 
     dynamic data = resp;
     data.forEach((item) {
-      // print(item);
+       //print(item);
       _relocates.add(Relocate.fromJson(item));
     });
     //print(data.length);
@@ -105,7 +111,7 @@ class InventoryRepository extends ApiBase {
     User user = getAuthTokenInfo(token);
     String url = apiURL + "inventory/relocate";
     print(url);
-
+  
     var response = await http.post(url,
         headers: {'content-type': 'application/json', 'Authorization': token},
         body: jsonEncode(relocate.toJson(relocate, user.id)));
@@ -130,7 +136,6 @@ class InventoryRepository extends ApiBase {
     User user = getAuthTokenInfo(token);
     String url = apiURL + "inventory/update";
     print(url);
-
     var response = await http.put(url,
         headers: {'content-type': 'application/json', 'Authorization': token},
         body: jsonEncode(relocate.toJson(relocate, user.id)));
@@ -148,4 +153,36 @@ class InventoryRepository extends ApiBase {
 
     return msg;
   }
+
+  //receice 
+  Future<String> postReceive(String id) async {
+    String token = await getToken();
+    String url = apiURL + "inventory/receive/"+id;
+    print(url);
+  
+    var response = await http.post(url,
+        headers: {'content-type': 'application/json', 'Authorization': token});
+
+    print(response.statusCode);
+    //print(response.body);
+    //print(response.body);
+    if (response.body.isEmpty){
+      return "Error receiving item...";
+    }
+
+    dynamic resp = jsonDecode(response.body);
+    print(resp);
+    
+    print(resp["value"]);
+    String msg =resp["value"]["msg"];
+    // String msg;
+    // if (resp['value']["ok"] == "yes") {
+    //   msg = "Relocate Submitted";
+    // } else {
+    //   msg = "Error submitting relocate....";
+    // }
+
+    return msg;
+  }
+
 }
