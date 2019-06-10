@@ -1,3 +1,4 @@
+import 'package:erpclient/utilities/snackbarutil.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -280,21 +281,21 @@ class _RelocateState extends State<ReceiveEmtry> {
 
   bool validateInputs(){
     if (_partController.text==""){
-      showSnackBar('Invalid Part number...');
+      SnackBarUtil.showSnackBar('Invalid Part number...',_scaffoldKey);
       return false;
     }
        
     if (_qtyController.text==""){
-      showSnackBar('Invalid qty...');
+      SnackBarUtil.showSnackBar('Invalid qty...',_scaffoldKey);
       return false;
     }
        
     if (_frwhController.text==""){
-       showSnackBar('From Warehouse is require...');
+       SnackBarUtil.showSnackBar('From Warehouse is require...',_scaffoldKey);
       return false;
     }
     if (_towhController.text==""){
-      showSnackBar('To Warehouse is require...');
+      SnackBarUtil.showSnackBar('To Warehouse is require...',_scaffoldKey);
       return false;
     }
     return true;
@@ -305,12 +306,12 @@ class _RelocateState extends State<ReceiveEmtry> {
       return;
      setSaveButtonState(true);    
      testReceive(_docId).then((msg) {
-       showSnackBar(msg);
+       SnackBarUtil.showSnackBar(msg,_scaffoldKey);
        resetForm(); 
        setSaveButtonState(false);
      },
      onError: (e){
-        showSnackBar("Error receiving...");
+        SnackBarUtil.showSnackBar("Error receiving...",_scaffoldKey);
         setSaveButtonState(false);
      });     
    
@@ -344,13 +345,5 @@ class _RelocateState extends State<ReceiveEmtry> {
        // _relocate = null;
     });
   }
-
-  showSnackBar(String msg) {
-     _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
+ 
 }

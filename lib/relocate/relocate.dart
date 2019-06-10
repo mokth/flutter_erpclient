@@ -3,6 +3,7 @@ import 'package:erpclient/lookup/whlookup.dart';
 import 'package:erpclient/model/relocate.dart';
 import 'package:erpclient/model/warehouse.dart';
 import 'package:erpclient/repository/inventoryrepo.dart';
+import 'package:erpclient/utilities/snackbarutil.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -199,6 +200,7 @@ class _RelocateState extends State<RelocateEntry> {
             children: <Widget>[
               Flexible(
                 child: TextFormField(
+                  enabled: false,
                   decoration: InputDecoration(
                       labelText: 'From Warehouse (F)',
                       filled: true,
@@ -227,6 +229,7 @@ class _RelocateState extends State<RelocateEntry> {
             children: <Widget>[
               Flexible(
                 child: TextFormField(
+                  enabled: false,
                   decoration: InputDecoration(
                       labelText: 'To Warehouse (G)',
                       filled: true,
@@ -354,7 +357,7 @@ class _RelocateState extends State<RelocateEntry> {
         case 0:
           _partname = text[1].trim();
           break;
-        case 1:
+        case 7:
           _partController.text = text[1].trim();
           break;
         case 6:
@@ -372,50 +375,61 @@ class _RelocateState extends State<RelocateEntry> {
 
   bool validateInputs() {
     if (_partController.text == "") {
-      showSnackBar('Invalid Part number...');
+      SnackBarUtil.showSnackBar('Invalid Part number...',_scaffoldKey);
       return false;
     }
     if (_cartonController.text == "") {
-      showSnackBar('Qty Per Carton is require...');
+      SnackBarUtil.showSnackBar('Qty Per Carton is require...',_scaffoldKey);
       return false;
     }
     List<String> _temp = _cartonController.text.trim().split(' ');
     if (_temp.length <= 1) {
-      showSnackBar('Invalid Qty Per Carton value...');
+      SnackBarUtil.showSnackBar('Invalid Qty Per Carton value...',_scaffoldKey);
       return false;
     }
     _cartonPackSize = int.tryParse(_temp[0]);
     if (_cartonPackSize == null) {
-      showSnackBar('Invalid Qty Per Carton value...');
+      SnackBarUtil.showSnackBar('Invalid Qty Per Carton value...',_scaffoldKey);
       return false;
     }
 
     if (_qtyController.text == "") {
-      showSnackBar('Number of Carton is require...');
+      SnackBarUtil.showSnackBar('Invalid qty...',_scaffoldKey);
       return false;
     }
 
+    int keyqty = int.tryParse(_qtyController.text);
+    if (keyqty<=0){
+       SnackBarUtil.showSnackBar('Invalid qty...',_scaffoldKey);
+       return false;
+    }
+
     if (_recqtyController.text == "") {
-      showSnackBar('Total Qty is invalid...');
+      SnackBarUtil.showSnackBar('Total Qty is invalid...',_scaffoldKey);
       return false;
     }
     _totalQty = int.tryParse(_recqtyController.text);
     if (_totalQty == null) {
-      showSnackBar('Total Qty is invalid...');
+      SnackBarUtil.showSnackBar('Total Qty is invalid...',_scaffoldKey);
+      return false;
+    }
+
+    if (_totalQty <=0) {
+      SnackBarUtil.showSnackBar('Total Qty is invalid...',_scaffoldKey);
       return false;
     }
 
     _noOfCarton = int.tryParse(_qtyController.text);
     if (_noOfCarton == null) {
-      showSnackBar('Invalid Number of Carton value...');
+      SnackBarUtil.showSnackBar('Invalid Number of Carton value...',_scaffoldKey);
       return false;
     }
     if (_frwhController.text == "") {
-      showSnackBar('From Warehouse is require...');
+      SnackBarUtil.showSnackBar('From Warehouse is require...',_scaffoldKey);
       return false;
     }
     if (_towhController.text == "") {
-      showSnackBar('To Warehouse is require...');
+      SnackBarUtil.showSnackBar('To Warehouse is require...',_scaffoldKey);
       return false;
     }
     return true;
@@ -447,20 +461,20 @@ class _RelocateState extends State<RelocateEntry> {
 
   saveNew() {
     repo.postRelocate(_relocate).then((resp) {
-      showSnackBar(resp);
+      SnackBarUtil.showSnackBar(resp,_scaffoldKey);
       resetForm();
     }, onError: (e) {
-      showSnackBar("Error submitting data....");
+      SnackBarUtil.showSnackBar("Error submitting data....",_scaffoldKey);
     });
   }
 
   saveEdit() {
     repo.putRelocate(_relocate).then((resp) {
-      showSnackBar(resp);
+      SnackBarUtil.showSnackBar(resp,_scaffoldKey);
       resetForm();
       Navigator.pop(context);
     }, onError: (e) {
-      showSnackBar("Error updating data....");
+      SnackBarUtil.showSnackBar("Error updating data....",_scaffoldKey);
     });
   }
 
@@ -480,12 +494,12 @@ class _RelocateState extends State<RelocateEntry> {
     });
   }
 
-  showSnackBar(String msg) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
+  // SnackBarUtil.showSnackBar(String msg) {
+  //   _scaffoldKey.currentState.SnackBarUtil.showSnackBar(
+  //     SnackBar(
+  //       content: Text(msg),
+  //       backgroundColor: Colors.red,
+  //     ),
+  //   );
+  // }
 }

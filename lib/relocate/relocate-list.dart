@@ -1,3 +1,4 @@
+import 'package:erpclient/utilities/snackbarutil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -200,19 +201,10 @@ class _RelocateListState extends State<RelocateList> {
           setState(() {});
         }, onError: (e) {
           print(e.toString());
-          showSnackBar("Error deleting record...");
+          SnackBarUtil.showSnackBar("Error deleting record...",_scaffoldKey);
         });
       }
     });
-  }
-
-  showSnackBar(String msg) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: Colors.red,
-      ),
-    );
   }
 
   Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {

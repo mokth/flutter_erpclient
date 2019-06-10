@@ -186,14 +186,6 @@ class _ReceiveListState extends State<ReceiveList> {
      var msg =await _repo.postReceive(id);
      return msg;
   }
-
-  showSnackBar(String msg) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
+ 
 
 }
