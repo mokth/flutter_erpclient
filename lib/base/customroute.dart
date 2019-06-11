@@ -14,8 +14,8 @@ class CustomRoute<T> extends MaterialPageRoute<T> {
     // Fades between routes. (If you don't want any animation,
     // just return child.)
     
-    //return new FadeTransition(opacity: animation, child: child);
-    return new RotationTransition( turns: animation, alignment: Alignment.center, child: child);
+    return new FadeTransition(opacity: animation, child: child);
+    //return new RotationTransition( turns: animation, alignment: Alignment.center, child: child);
     
   }
 }

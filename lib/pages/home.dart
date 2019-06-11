@@ -4,8 +4,8 @@ import 'package:connectivity/connectivity.dart';
 import 'package:erpclient/pages/Settings/setting.dart';
 import 'package:erpclient/relocate/receive-list.dart';
 import 'package:flutter/material.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
-import 'package:erpclient/base/connectionStatusSingleton.dart';
 import 'package:erpclient/blog/auth/authevent.dart';
 import 'package:erpclient/blog/auth/authbloc.dart';
 import 'package:erpclient/model/user.dart';
@@ -22,8 +22,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Connectivity _connectivity = Connectivity();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   AuthenticationBloc authenticationBloc;
-  String _connectionStatus;
+  //String _connectionStatus;
   StreamSubscription<ConnectivityResult> _connectionChangeStream;
   User _user;
   String _usrImgae;
@@ -35,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     _connectionChangeStream =
         _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        _connectionStatus = result.toString();
+        //_connectionStatus = result.toString();
         //just to refresh the UI
         checkConnection().then((val) => setState(() {}));
       });
@@ -89,6 +91,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
           title: Row(
         children: <Widget>[
@@ -101,25 +104,32 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: Container(
-                decoration: new BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('images/erplogo.png'),
-                    fit: BoxFit.cover,
+              child: GestureDetector(
+                onTap: () {
+                  if (!_scaffoldKey.currentState.isDrawerOpen) {
+                    _scaffoldKey.currentState.openDrawer();
+                  }
+                },
+                child: Container(
+                  decoration: new BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('images/erplogo.png'),
+                      fit: BoxFit.cover,
+                    ),
                   ),
+                  width: MediaQuery.of(context).size.width,
+                  // height: MediaQuery.of(context).size.height * 0.4 ,
                 ),
-                width: MediaQuery.of(context).size.width,
-                // height: MediaQuery.of(context).size.height * 0.4 ,
               ),
             ),
-            Center(
-              child: Text('Wincom Solution',
-                  style: TextStyle(
-                      fontFamily: 'OpenSans',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20.0,
-                      color: Colors.black)),
-            ),
+            FadeAnimatedTextKit(
+                onTap: () {},
+                text: ["WINCOM", "WINCOM SOLUTION","WINCOM ERP SYSTEM"],
+                textStyle:
+                    TextStyle(fontSize: 24.0,fontFamily: 'OpenSans',fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+                alignment: AlignmentDirectional.center // or Alignment.topLeft
+                ),
             Center(
               child: Text("(c) by 2019 WinCom Solution all right reserved.",
                   style: TextStyle(
@@ -153,7 +163,8 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      new CustomRoute(builder: (context) => new SettingPage(null)),
+                      new CustomRoute(
+                          builder: (context) => new SettingPage(null)),
                     );
                   },
                   child: Row(
