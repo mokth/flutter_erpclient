@@ -3,7 +3,9 @@ import 'package:erpclient/lookup/whlookup.dart';
 import 'package:erpclient/model/relocate.dart';
 import 'package:erpclient/model/warehouse.dart';
 import 'package:erpclient/repository/inventoryrepo.dart';
+import 'package:erpclient/utilities/button-util.dart';
 import 'package:erpclient/utilities/snackbarutil.dart';
+import 'package:erpclient/utilities/textstyle-util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -104,9 +106,8 @@ class _RelocateState extends State<RelocateEntry> {
       if (_noOfCarton == null) {
         return false;
       }
-      int ttlqty= (_noOfCarton * _cartonPackSize);
-      _recqtyController.text= ttlqty.toString();
-
+      int ttlqty = (_noOfCarton * _cartonPackSize);
+      _recqtyController.text = ttlqty.toString();
     });
   }
 
@@ -163,36 +164,24 @@ class _RelocateState extends State<RelocateEntry> {
         children: <Widget>[
           TextFormField(
             enabled: false,
-            decoration: InputDecoration(
-                labelText: 'Part Number (PN)',
-                filled: true,
-                fillColor: Colors.white),
+            decoration: TextStyleUtil.getFormFieldInputDecoration('Part Number (PN)'),
             controller: _partController,
           ),
           TextFormField(
             enabled: false,
-            decoration: InputDecoration(
-                labelText: 'Qty Per Carton (C)',
-                filled: true,
-                fillColor: Colors.white),
+            decoration: TextStyleUtil.getFormFieldInputDecoration('Qty Per Carton (C)'),            
             controller: _cartonController,
           ),
           TextFormField(
             keyboardType:
                 TextInputType.numberWithOptions(signed: false, decimal: false),
-            decoration: InputDecoration(
-                labelText: 'Number of Carton (D)',
-                filled: true,
-                fillColor: Colors.white),
+            decoration: TextStyleUtil.getFormFieldInputDecoration('Number of Carton (D)'),    
             controller: _qtyController,
           ),
           TextFormField(
             keyboardType:
-                TextInputType.numberWithOptions(signed: false, decimal: false),
-            decoration: InputDecoration(
-                labelText: 'Total Qty (PCS)',
-                filled: true,
-                fillColor: Colors.white),
+             TextInputType.numberWithOptions(signed: false, decimal: false),
+             decoration: TextStyleUtil.getFormFieldInputDecoration('Total Qty (PCS)'),
             controller: _recqtyController,
           ),
           Row(
@@ -201,10 +190,7 @@ class _RelocateState extends State<RelocateEntry> {
               Flexible(
                 child: TextFormField(
                   enabled: false,
-                  decoration: InputDecoration(
-                      labelText: 'From Warehouse (F)',
-                      filled: true,
-                      fillColor: Colors.white),
+                  decoration: TextStyleUtil.getFormFieldInputDecoration('From Warehouse (F)'),
                   controller: _frwhController,
                 ),
               ),
@@ -230,10 +216,7 @@ class _RelocateState extends State<RelocateEntry> {
               Flexible(
                 child: TextFormField(
                   enabled: false,
-                  decoration: InputDecoration(
-                      labelText: 'To Warehouse (G)',
-                      filled: true,
-                      fillColor: Colors.white),
+                  decoration: TextStyleUtil.getFormFieldInputDecoration('To Warehouse (G)'),                   
                   controller: _towhController,
                 ),
               ),
@@ -263,40 +246,24 @@ class _RelocateState extends State<RelocateEntry> {
       padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
       child: Row(children: <Widget>[
         Expanded(
-          child: RaisedButton(
-            color: Color(0xff5DADE2),
-            onPressed: saveRelocate,
-            child: Text(
-              'Save',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w700),
-            ),
-          ),
+          child: ButtonUtil.getRaiseButton(
+              saveRelocate, "Save", Color(0xff5DADE2)),          
         ),
         Text(' '),
         Expanded(
-          child: RaisedButton(
-            color: Colors.redAccent,
-            onPressed: () {
-              if (_editMode) {
-                Navigator.pop(context);
-              } else {
-                resetForm();
-              }
-            },
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w700),
-            ),
-          ),
+          child: ButtonUtil.getRaiseButton(
+              onCancelHandler, "Cancel", Colors.redAccent),
         ),
       ]),
     );
+  }
+
+  onCancelHandler() {
+    if (_editMode) {
+      Navigator.pop(context);
+    } else {
+      resetForm();
+    }
   }
 
   showfrWhLookup() {
@@ -375,61 +342,64 @@ class _RelocateState extends State<RelocateEntry> {
 
   bool validateInputs() {
     if (_partController.text == "") {
-      SnackBarUtil.showSnackBar('Invalid Part number...',_scaffoldKey);
+      SnackBarUtil.showSnackBar('Invalid Part number...', _scaffoldKey);
       return false;
     }
     if (_cartonController.text == "") {
-      SnackBarUtil.showSnackBar('Qty Per Carton is require...',_scaffoldKey);
+      SnackBarUtil.showSnackBar('Qty Per Carton is require...', _scaffoldKey);
       return false;
     }
     List<String> _temp = _cartonController.text.trim().split(' ');
     if (_temp.length <= 1) {
-      SnackBarUtil.showSnackBar('Invalid Qty Per Carton value...',_scaffoldKey);
+      SnackBarUtil.showSnackBar(
+          'Invalid Qty Per Carton value...', _scaffoldKey);
       return false;
     }
     _cartonPackSize = int.tryParse(_temp[0]);
     if (_cartonPackSize == null) {
-      SnackBarUtil.showSnackBar('Invalid Qty Per Carton value...',_scaffoldKey);
+      SnackBarUtil.showSnackBar(
+          'Invalid Qty Per Carton value...', _scaffoldKey);
       return false;
     }
 
     if (_qtyController.text == "") {
-      SnackBarUtil.showSnackBar('Invalid qty...',_scaffoldKey);
+      SnackBarUtil.showSnackBar('Invalid qty...', _scaffoldKey);
       return false;
     }
 
     int keyqty = int.tryParse(_qtyController.text);
-    if (keyqty<=0){
-       SnackBarUtil.showSnackBar('Invalid qty...',_scaffoldKey);
-       return false;
+    if (keyqty <= 0) {
+      SnackBarUtil.showSnackBar('Invalid qty...', _scaffoldKey);
+      return false;
     }
 
     if (_recqtyController.text == "") {
-      SnackBarUtil.showSnackBar('Total Qty is invalid...',_scaffoldKey);
+      SnackBarUtil.showSnackBar('Total Qty is invalid...', _scaffoldKey);
       return false;
     }
     _totalQty = int.tryParse(_recqtyController.text);
     if (_totalQty == null) {
-      SnackBarUtil.showSnackBar('Total Qty is invalid...',_scaffoldKey);
+      SnackBarUtil.showSnackBar('Total Qty is invalid...', _scaffoldKey);
       return false;
     }
 
-    if (_totalQty <=0) {
-      SnackBarUtil.showSnackBar('Total Qty is invalid...',_scaffoldKey);
+    if (_totalQty <= 0) {
+      SnackBarUtil.showSnackBar('Total Qty is invalid...', _scaffoldKey);
       return false;
     }
 
     _noOfCarton = int.tryParse(_qtyController.text);
     if (_noOfCarton == null) {
-      SnackBarUtil.showSnackBar('Invalid Number of Carton value...',_scaffoldKey);
+      SnackBarUtil.showSnackBar(
+          'Invalid Number of Carton value...', _scaffoldKey);
       return false;
     }
     if (_frwhController.text == "") {
-      SnackBarUtil.showSnackBar('From Warehouse is require...',_scaffoldKey);
+      SnackBarUtil.showSnackBar('From Warehouse is require...', _scaffoldKey);
       return false;
     }
     if (_towhController.text == "") {
-      SnackBarUtil.showSnackBar('To Warehouse is require...',_scaffoldKey);
+      SnackBarUtil.showSnackBar('To Warehouse is require...', _scaffoldKey);
       return false;
     }
     return true;
@@ -437,14 +407,13 @@ class _RelocateState extends State<RelocateEntry> {
 
   void saveRelocate() {
     if (!validateInputs()) return;
-     
-   
+
     _relocate = new Relocate(
       icode: _partController.text,
       idesc: _partname,
       packsize: _cartonPackSize,
       qty: _noOfCarton,
-      stdqty:_totalQty,// (_noOfCarton * _cartonPackSize),
+      stdqty: _totalQty, // (_noOfCarton * _cartonPackSize),
       fromwh: _frwhController.text,
       towh: _towhController.text,
       userid: '',
@@ -461,20 +430,20 @@ class _RelocateState extends State<RelocateEntry> {
 
   saveNew() {
     repo.postRelocate(_relocate).then((resp) {
-      SnackBarUtil.showSnackBar(resp,_scaffoldKey);
+      SnackBarUtil.showSnackBar(resp, _scaffoldKey);
       resetForm();
     }, onError: (e) {
-      SnackBarUtil.showSnackBar("Error submitting data....",_scaffoldKey);
+      SnackBarUtil.showSnackBar("Error submitting data....", _scaffoldKey);
     });
   }
 
   saveEdit() {
     repo.putRelocate(_relocate).then((resp) {
-      SnackBarUtil.showSnackBar(resp,_scaffoldKey);
+      SnackBarUtil.showSnackBar(resp, _scaffoldKey);
       resetForm();
       Navigator.pop(context);
     }, onError: (e) {
-      SnackBarUtil.showSnackBar("Error updating data....",_scaffoldKey);
+      SnackBarUtil.showSnackBar("Error updating data....", _scaffoldKey);
     });
   }
 

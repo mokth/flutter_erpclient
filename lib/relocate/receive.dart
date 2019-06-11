@@ -1,4 +1,6 @@
+import 'package:erpclient/utilities/button-util.dart';
 import 'package:erpclient/utilities/snackbarutil.dart';
+import 'package:erpclient/utilities/textstyle-util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -90,34 +92,22 @@ class _RelocateState extends State<ReceiveEmtry> {
         children: <Widget>[
           TextFormField(
             enabled: false,
-            decoration: InputDecoration(
-                labelText: 'Ref Number',
-                filled: true,
-                fillColor: Colors.white),
+            decoration: TextStyleUtil.getFormFieldInputDecoration('Ref Number'),
             controller: _refController,
           ),
            TextFormField(
             enabled: false,
-            decoration: InputDecoration(
-                labelText: 'Part Number',
-                filled: true,
-                fillColor: Colors.white),
+            decoration: TextStyleUtil.getFormFieldInputDecoration('Part Number'),
             controller: _partController,
           ),
           TextFormField(
             enabled: false,
-            decoration: InputDecoration(
-                labelText: 'Receiv Qty PCS',
-                filled: true,
-                fillColor: Colors.white),
+            decoration: TextStyleUtil.getFormFieldInputDecoration('Receiv Qty PCS'),
             controller: _qtyController,
           ),
           TextFormField(
             keyboardType: TextInputType.numberWithOptions(signed: false,decimal: false),
-            decoration: InputDecoration(
-                labelText: 'Number of Carton',
-                filled: true,
-                fillColor: Colors.white),
+            decoration: TextStyleUtil.getFormFieldInputDecoration('Number of Carton'),
             controller: _cartonController,
           ),
           Row(
@@ -125,10 +115,7 @@ class _RelocateState extends State<ReceiveEmtry> {
             children: <Widget>[
               Flexible(
                 child: TextFormField(
-                  decoration: InputDecoration(
-                      labelText: 'From Warehouse',
-                      filled: true,
-                      fillColor: Colors.white),
+                  decoration: TextStyleUtil.getFormFieldInputDecoration('From Warehouse'),
                   controller: _frwhController,
                 ),
               ),
@@ -140,10 +127,7 @@ class _RelocateState extends State<ReceiveEmtry> {
             children: <Widget>[
               Flexible(
                 child: TextFormField(
-                  decoration: InputDecoration(
-                      labelText: 'To Warehouse',
-                      filled: true,
-                      fillColor: Colors.white),
+                  decoration: TextStyleUtil.getFormFieldInputDecoration('To Warehouse'),
                   controller: _towhController,
                 ),
               ),
@@ -160,42 +144,28 @@ class _RelocateState extends State<ReceiveEmtry> {
       padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
       child: Row(children: <Widget>[
         Expanded(
-          child: RaisedButton(
-            color: (isPosting)?Theme.of(context).disabledColor:Color(0xff5DADE2),
-            onPressed: (){
-               if (!isPosting){
-                   saveRelocate();
-               }
-            },
-            child: Text(
-              'Receive',
-              style: TextStyle(
-                  color:Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w700),
-            ),
-          ),
+          child:
+          ButtonUtil.getRaiseButton(onReceiveHandler, "Receive",(isPosting)?Theme.of(context).disabledColor:Color(0xff5DADE2)),   
         ),
         Text(' '),
         Expanded(
-          child: RaisedButton(
-            color: (isPosting)?Theme.of(context).disabledColor:Colors.redAccent,
-            onPressed: (){
-               if (!isPosting){
-                  resetForm();
-                }
-              },
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w700),
-            ),
-          ),
+          child: ButtonUtil.getRaiseButton(onCancelHandler, "Cancel",(isPosting)?Theme.of(context).disabledColor:Colors.redAccent),   
+         
         ),
       ]),
     );
+  }
+  
+  onReceiveHandler(){
+     if (!isPosting){
+          saveRelocate();
+     }
+  }
+
+   onCancelHandler(){
+      if (!isPosting){
+         resetForm();
+     }
   }
 
   Widget dispScanResult() {
