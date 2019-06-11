@@ -1,3 +1,9 @@
+
+import 'package:flutter/material.dart';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+
 import 'package:erpclient/lookup/lookup-scoremodel.dart';
 import 'package:erpclient/lookup/whlookup.dart';
 import 'package:erpclient/model/relocate.dart';
@@ -6,11 +12,6 @@ import 'package:erpclient/repository/inventoryrepo.dart';
 import 'package:erpclient/utilities/button-util.dart';
 import 'package:erpclient/utilities/snackbarutil.dart';
 import 'package:erpclient/utilities/textstyle-util.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:barcode_scan/barcode_scan.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
 
 class RelocateEntry extends StatefulWidget {
   final Relocate relocate;
@@ -20,7 +21,8 @@ class RelocateEntry extends StatefulWidget {
   _RelocateState createState() => _RelocateState();
 }
 
-class _RelocateState extends State<RelocateEntry> {
+class _RelocateState extends State<RelocateEntry>
+    with SingleTickerProviderStateMixin {
   final InventoryRepository repo = new InventoryRepository();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _partController = TextEditingController();
@@ -29,6 +31,7 @@ class _RelocateState extends State<RelocateEntry> {
   final _recqtyController = TextEditingController();
   final _frwhController = TextEditingController();
   final _towhController = TextEditingController();
+  
 
   ScopedLookup<Warehouse> scopefrwh;
   ScopedLookup<Warehouse> scopetowh;
@@ -45,6 +48,7 @@ class _RelocateState extends State<RelocateEntry> {
   @override
   void initState() {
     super.initState();
+   
     _editMode = widget.editmode == "EDIT";
     if (_editMode) {
       _relocate = widget.relocate;
@@ -64,6 +68,11 @@ class _RelocateState extends State<RelocateEntry> {
     }, onError: (e) {
       print(e.toString());
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   loadData() {
@@ -139,14 +148,14 @@ class _RelocateState extends State<RelocateEntry> {
   }
 
   Widget scanner() {
-    return new RawMaterialButton(
+    return RawMaterialButton(
       onPressed: () {
         if (!_editMode) {
           scan();
         }
       },
       child: new Icon(
-        Icons.scanner,
+        Icons.camera_alt,
         color: (_editMode) ? Theme.of(context).disabledColor : Colors.blue,
         size: 50.0,
       ),
@@ -164,24 +173,28 @@ class _RelocateState extends State<RelocateEntry> {
         children: <Widget>[
           TextFormField(
             enabled: false,
-            decoration: TextStyleUtil.getFormFieldInputDecoration('Part Number (PN)'),
+            decoration:
+                TextStyleUtil.getFormFieldInputDecoration('Part Number (PN)'),
             controller: _partController,
           ),
           TextFormField(
             enabled: false,
-            decoration: TextStyleUtil.getFormFieldInputDecoration('Qty Per Carton (C)'),            
+            decoration:
+                TextStyleUtil.getFormFieldInputDecoration('Qty Per Carton (C)'),
             controller: _cartonController,
           ),
           TextFormField(
             keyboardType:
                 TextInputType.numberWithOptions(signed: false, decimal: false),
-            decoration: TextStyleUtil.getFormFieldInputDecoration('Number of Carton (D)'),    
+            decoration: TextStyleUtil.getFormFieldInputDecoration(
+                'Number of Carton (D)'),
             controller: _qtyController,
           ),
           TextFormField(
             keyboardType:
-             TextInputType.numberWithOptions(signed: false, decimal: false),
-             decoration: TextStyleUtil.getFormFieldInputDecoration('Total Qty (PCS)'),
+                TextInputType.numberWithOptions(signed: false, decimal: false),
+            decoration:
+                TextStyleUtil.getFormFieldInputDecoration('Total Qty (PCS)'),
             controller: _recqtyController,
           ),
           Row(
@@ -190,7 +203,8 @@ class _RelocateState extends State<RelocateEntry> {
               Flexible(
                 child: TextFormField(
                   enabled: false,
-                  decoration: TextStyleUtil.getFormFieldInputDecoration('From Warehouse (F)'),
+                  decoration: TextStyleUtil.getFormFieldInputDecoration(
+                      'From Warehouse (F)'),
                   controller: _frwhController,
                 ),
               ),
@@ -216,7 +230,8 @@ class _RelocateState extends State<RelocateEntry> {
               Flexible(
                 child: TextFormField(
                   enabled: false,
-                  decoration: TextStyleUtil.getFormFieldInputDecoration('To Warehouse (G)'),                   
+                  decoration: TextStyleUtil.getFormFieldInputDecoration(
+                      'To Warehouse (G)'),
                   controller: _towhController,
                 ),
               ),
@@ -247,7 +262,7 @@ class _RelocateState extends State<RelocateEntry> {
       child: Row(children: <Widget>[
         Expanded(
           child: ButtonUtil.getRaiseButton(
-              saveRelocate, "Save", Color(0xff5DADE2)),          
+              saveRelocate, "Save", Color(0xff5DADE2)),
         ),
         Text(' '),
         Expanded(

@@ -1,14 +1,14 @@
-import 'package:erpclient/utilities/button-util.dart';
-import 'package:erpclient/utilities/snackbarutil.dart';
-import 'package:erpclient/utilities/textstyle-util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
+import 'package:erpclient/utilities/button-util.dart';
+import 'package:erpclient/utilities/snackbarutil.dart';
+import 'package:erpclient/utilities/textstyle-util.dart';
 import 'package:erpclient/repository/inventoryrepo.dart';
-import 'package:erpclient/model/relocate.dart';
+
 
 class ReceiveEmtry extends StatefulWidget {
   
@@ -30,10 +30,7 @@ class _RelocateState extends State<ReceiveEmtry> {
   String barcode = "";
   String _docId;  
   bool isPosting;
-  // Relocate _relocate;
-   int _noOfCarton;
-   int _cartonPackSize;
-  
+   
 
   @override
   void initState() {
@@ -74,7 +71,7 @@ class _RelocateState extends State<ReceiveEmtry> {
             scan();          
         },
       child: new Icon(
-        Icons.scanner,
+        Icons.camera_alt,
         color: Colors.blue,
         size: 50.0,
       ),
@@ -234,7 +231,7 @@ class _RelocateState extends State<ReceiveEmtry> {
           _cartonController.text = text[1].trim();
           break;
         case 6:
-            _cartonPackSize =  int.tryParse(text[1].trim());
+           // _cartonPackSize =  int.tryParse(text[1].trim());
           break;
         case 7:
             _qtyController.text =  text[1].trim();
@@ -308,11 +305,7 @@ class _RelocateState extends State<ReceiveEmtry> {
         _qtyController.text ="";
         _refController.text ="";
         barcode ="";
-        _docId ="";
-        //_partname="";
-        _noOfCarton=null;
-        _cartonPackSize = null;
-       // _relocate = null;
+        _docId ="";        
     });
   }
  
