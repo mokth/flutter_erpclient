@@ -40,9 +40,9 @@ class _RelocateState extends State<RelocateEntry>
   List<Warehouse> _warehouses;
   bool _isWhfound = false;
   Relocate _relocate;
-  int _noOfCarton;
+  double _noOfCarton;
   int _cartonPackSize;
-  int _totalQty;
+  double _totalQty;
   bool _editMode;
 
   @override
@@ -98,11 +98,34 @@ class _RelocateState extends State<RelocateEntry>
     });
   }
 
+  // onQtyControllerChanged() {
+  //   _qtyController.addListener(() {
+  //     if (_qtyController.text == "") {
+  //       return false;
+  //     }
+  //     List<String> _temp = _cartonController.text.trim().split(' ');
+  //     if (_temp.length <= 1) {
+  //       return false;
+  //     }
+  //     _cartonPackSize = int.tryParse(_temp[0]);
+  //     if (_cartonPackSize == null) {
+  //       return false;
+  //     }
+  //     _noOfCarton = double.tryParse(_qtyController.text);
+  //     if (_noOfCarton == null) {
+  //       return false;
+  //     }
+  //     double ttlqty = (_noOfCarton * _cartonPackSize);
+  //     _recqtyController.text = ttlqty.toString();
+  //   });
+  // }
+
   onQtyControllerChanged() {
-    _qtyController.addListener(() {
-      if (_qtyController.text == "") {
-        return false;
-      }
+    _recqtyController.addListener(() {
+      double ttlqtyKeyIn = double.tryParse( _recqtyController.text);
+      if (ttlqtyKeyIn<=0)
+         return false;
+
       List<String> _temp = _cartonController.text.trim().split(' ');
       if (_temp.length <= 1) {
         return false;
@@ -111,12 +134,14 @@ class _RelocateState extends State<RelocateEntry>
       if (_cartonPackSize == null) {
         return false;
       }
-      _noOfCarton = int.tryParse(_qtyController.text);
-      if (_noOfCarton == null) {
-        return false;
-      }
-      int ttlqty = (_noOfCarton * _cartonPackSize);
-      _recqtyController.text = ttlqty.toString();
+      // _noOfCarton = double.tryParse(_qtyController.text);
+      // if (_noOfCarton == null) {
+      //   return false;
+      // }
+     _noOfCarton = ttlqtyKeyIn / _cartonPackSize;
+      //double ttlqty = (_noOfCarton * _cartonPackSize);
+      //_recqtyController.text = ttlqty.toString();
+     _qtyController.text= _noOfCarton.toStringAsFixed(2);
     });
   }
 
@@ -126,7 +151,7 @@ class _RelocateState extends State<RelocateEntry>
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('Relocate'),
+          title: Text('ISSUING'),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -186,16 +211,16 @@ class _RelocateState extends State<RelocateEntry>
           TextFormField(
             keyboardType:
                 TextInputType.numberWithOptions(signed: false, decimal: false),
+            decoration:
+                TextStyleUtil.getFormFieldInputDecoration('Total Qty (PCS/KG/M/SET)'),
+            controller: _recqtyController,
+          ),
+           TextFormField(
+            keyboardType:
+                TextInputType.numberWithOptions(signed: false, decimal: false),
             decoration: TextStyleUtil.getFormFieldInputDecoration(
                 'Number of Carton (D)'),
             controller: _qtyController,
-          ),
-          TextFormField(
-            keyboardType:
-                TextInputType.numberWithOptions(signed: false, decimal: false),
-            decoration:
-                TextStyleUtil.getFormFieldInputDecoration('Total Qty (PCS)'),
-            controller: _recqtyController,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -382,7 +407,7 @@ class _RelocateState extends State<RelocateEntry>
       return false;
     }
 
-    int keyqty = int.tryParse(_qtyController.text);
+    double keyqty = double.tryParse(_qtyController.text);
     if (keyqty <= 0) {
       SnackBarUtil.showSnackBar('Invalid qty...', _scaffoldKey);
       return false;
@@ -392,7 +417,7 @@ class _RelocateState extends State<RelocateEntry>
       SnackBarUtil.showSnackBar('Total Qty is invalid...', _scaffoldKey);
       return false;
     }
-    _totalQty = int.tryParse(_recqtyController.text);
+    _totalQty = double.tryParse(_recqtyController.text);
     if (_totalQty == null) {
       SnackBarUtil.showSnackBar('Total Qty is invalid...', _scaffoldKey);
       return false;
@@ -403,7 +428,7 @@ class _RelocateState extends State<RelocateEntry>
       return false;
     }
 
-    _noOfCarton = int.tryParse(_qtyController.text);
+    _noOfCarton = double.tryParse(_qtyController.text);
     if (_noOfCarton == null) {
       SnackBarUtil.showSnackBar(
           'Invalid Number of Carton value...', _scaffoldKey);

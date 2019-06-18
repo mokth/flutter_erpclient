@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:erpclient/pages/Settings/setting.dart';
+import 'package:erpclient/relocate/barcode-scan.dart';
 import 'package:erpclient/relocate/receive-list.dart';
+import 'package:erpclient/relocate/stock-balance.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -216,7 +218,7 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               menuHeader(),
               Divider(),
-              menuItem('Relocate', () {
+              menuItem('Issuing', () {
                 Navigator.push(
                   context,
                   new CustomRoute(builder: (context) => new RelocateList()),
@@ -229,6 +231,20 @@ class _HomePageState extends State<HomePage> {
                   new CustomRoute(builder: (context) => new ReceiveList()),
                 );
               }),
+              Divider(),
+              menuItem('Barcode Scan', () {
+                Navigator.push(
+                  context,
+                  new CustomRoute(builder: (context) => new BarCodeScan()),
+                );
+              }),
+              Divider(),
+              // menuItem('Stock Balance', () {
+              //   Navigator.push(
+              //     context,
+              //     new CustomRoute(builder: (context) => new StockBalance()),
+              //   );
+              // }),
             ],
           ),
         ),

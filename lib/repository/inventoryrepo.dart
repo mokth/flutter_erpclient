@@ -1,3 +1,5 @@
+import 'package:erpclient/model/qtybalance.dart';
+import 'package:erpclient/model/reject.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -171,18 +173,66 @@ class InventoryRepository extends ApiBase {
     }
 
     dynamic resp = jsonDecode(response.body);
+    //print(resp);
+    
+    //print(resp["value"]);
+    //String msg =resp["value"]["msg"];
+    print(resp["error"]);
+    String ok =resp["ok"];
+    String msg =resp["msg"];
+    if (ok=="yes"){
+      msg= "Item Received.";
+    }
+   
+    return msg;
+  }
+
+  //reject
+  Future<String> postReject(Reject reject) async {
+    String token = await getToken();
+    String url   = apiURL + "inventory/reject";
+    print(url);
+  
+    var response = await http.post(url,
+        headers: {'content-type': 'application/json', 'Authorization': token},
+        body: jsonEncode(reject.toJson(reject)));
+
+    print(response.statusCode);
+    //print(response.body);
+    if (response.body.isEmpty){
+      return "Error receiving item...";
+    }
+
+    dynamic resp = jsonDecode(response.body);
     print(resp);
     
-    print(resp["value"]);
-    String msg =resp["value"]["msg"];
-    // String msg;
-    // if (resp['value']["ok"] == "yes") {
-    //   msg = "Relocate Submitted";
-    // } else {
-    //   msg = "Error submitting relocate....";
-    // }
-
+    print(resp["error"]);
+    String msg =resp["error"];
+   
     return msg;
+  }
+
+  //Get balance 
+  Future<List<QtyBalance>> getBalance(String id) async {
+    List<QtyBalance> _list = new List<QtyBalance>();
+    String token = await getToken();
+    String url = apiURL + "inventory/balance/"+Uri.encodeComponent(id);
+    print(url);
+  
+    var response = await http.get(url,
+        headers: {'content-type': 'application/json', 'Authorization': token});
+
+    print(response.statusCode);
+    dynamic resp = jsonDecode(response.body);
+
+    dynamic data = resp;
+    data.forEach((item) {
+      // print(item);
+      _list.add(QtyBalance.fromJson(item));
+    });
+    print(_list.length.toString());
+    return _list;
+    
   }
 
 }

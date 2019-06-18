@@ -1,3 +1,4 @@
+import 'package:erpclient/model/reject.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -9,9 +10,7 @@ import 'package:erpclient/utilities/snackbarutil.dart';
 import 'package:erpclient/utilities/textstyle-util.dart';
 import 'package:erpclient/repository/inventoryrepo.dart';
 
-
 class ReceiveEmtry extends StatefulWidget {
-  
   ReceiveEmtry({Key key}) : super(key: key);
 
   _RelocateState createState() => _RelocateState();
@@ -26,18 +25,18 @@ class _RelocateState extends State<ReceiveEmtry> {
   final _qtyController = TextEditingController();
   final _frwhController = TextEditingController();
   final _towhController = TextEditingController();
-  
+  final _rejectController = TextEditingController();
+
   String barcode = "";
-  String _docId;  
+  String _docId;
   bool isPosting;
-   
 
   @override
   void initState() {
-    super.initState();  
-    isPosting =false;
+    super.initState();
+    isPosting = false;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -67,9 +66,9 @@ class _RelocateState extends State<ReceiveEmtry> {
 
   Widget scanner() {
     return new RawMaterialButton(
-      onPressed:(){ 
-            scan();          
-        },
+      onPressed: () {
+        scan();
+      },
       child: new Icon(
         Icons.camera_alt,
         color: Colors.blue,
@@ -92,44 +91,53 @@ class _RelocateState extends State<ReceiveEmtry> {
             decoration: TextStyleUtil.getFormFieldInputDecoration('Ref Number'),
             controller: _refController,
           ),
-           TextFormField(
+          TextFormField(
             enabled: false,
-            decoration: TextStyleUtil.getFormFieldInputDecoration('Part Number'),
+            decoration:
+                TextStyleUtil.getFormFieldInputDecoration('Part Number'),
             controller: _partController,
           ),
           TextFormField(
             enabled: false,
-            decoration: TextStyleUtil.getFormFieldInputDecoration('Receiv Qty PCS'),
+            decoration:
+                TextStyleUtil.getFormFieldInputDecoration('Receiv Qty (Pcs/Kg/M/Set)'),
             controller: _qtyController,
           ),
           TextFormField(
-            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: false),
-            decoration: TextStyleUtil.getFormFieldInputDecoration('Number of Carton'),
+            enabled: false,
+            keyboardType:
+                TextInputType.numberWithOptions(signed: false, decimal: false),
+            decoration:
+                TextStyleUtil.getFormFieldInputDecoration('Number of Carton'),
             controller: _cartonController,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Flexible(
+              Expanded(
+                flex: 1,
                 child: TextFormField(
-                  decoration: TextStyleUtil.getFormFieldInputDecoration('From Warehouse'),
+                  enabled: false,
+                  decoration: TextStyleUtil.getFormFieldInputDecoration(
+                      'From Warehouse'),
                   controller: _frwhController,
                 ),
               ),
-             
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Flexible(
+              Expanded(
+                flex: 1,
                 child: TextFormField(
-                  decoration: TextStyleUtil.getFormFieldInputDecoration('To Warehouse'),
+                  enabled: false,
+                  decoration:
+                      TextStyleUtil.getFormFieldInputDecoration('To Warehouse'),
                   controller: _towhController,
                 ),
               ),
-             
             ],
+          ),
+          TextFormField(
+            enabled: true,           
+            decoration:
+                TextStyleUtil.getFormFieldInputDecoration('Reject Reason'),
+            controller: _rejectController,
           ),
         ],
       ),
@@ -141,30 +149,22 @@ class _RelocateState extends State<ReceiveEmtry> {
       padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
       child: Row(children: <Widget>[
         Expanded(
-          child:
-          ButtonUtil.getRaiseButton(onReceiveHandler, "Receive",(isPosting)?Theme.of(context).disabledColor:Color(0xff5DADE2)),   
+          child: ButtonUtil.getRaiseButton(
+              onReceiveHandler,
+              "Receive",
+              (isPosting)
+                  ? Theme.of(context).disabledColor
+                  : Color(0xff5DADE2)),
         ),
         Text(' '),
         Expanded(
-          child: ButtonUtil.getRaiseButton(onCancelHandler, "Cancel",(isPosting)?Theme.of(context).disabledColor:Colors.redAccent),   
-         
+          child: ButtonUtil.getRaiseButton(onCancelHandler, "Reject",
+              (isPosting) ? Theme.of(context).disabledColor : Colors.redAccent),
         ),
       ]),
     );
   }
-  
-  onReceiveHandler(){
-     if (!isPosting){
-          saveRelocate();
-     }
-  }
-
-   onCancelHandler(){
-      if (!isPosting){
-         resetForm();
-     }
-  }
-
+ 
   Widget dispScanResult() {
     return Container(
       padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
@@ -231,82 +231,128 @@ class _RelocateState extends State<ReceiveEmtry> {
           _cartonController.text = text[1].trim();
           break;
         case 6:
-           // _cartonPackSize =  int.tryParse(text[1].trim());
+          // _cartonPackSize =  int.tryParse(text[1].trim());
           break;
         case 7:
-            _qtyController.text =  text[1].trim();
+          _qtyController.text = text[1].trim();
           break;
         default:
           break;
       }
     }
-    arr.map((str){
-        List<String> text = str.split(':');
-        print(text[1]);
+    arr.map((str) {
+      List<String> text = str.split(':');
+      print(text[1]);
     });
   }
+ 
+  onReceiveHandler() {
+    if (!isPosting) {
+      saveRelocate();
+    }
+  }
 
-  bool validateInputs(){
-    if (_partController.text==""){
-      SnackBarUtil.showSnackBar('Invalid Part number...',_scaffoldKey);
+  onCancelHandler() {
+    if (!isPosting) {
+      //resetForm();
+      saveReject();
+    }
+  }
+
+ bool validateReject() {
+    if ( _rejectController.text == "") {
+      SnackBarUtil.showSnackBar('Reject reason is mandatory...', _scaffoldKey);
       return false;
     }
-       
-    if (_qtyController.text==""){
-      SnackBarUtil.showSnackBar('Invalid qty...',_scaffoldKey);
+    return true;
+ }
+
+  bool validateInputs() {
+    if (_partController.text == "") {
+      SnackBarUtil.showSnackBar('Invalid Part number...', _scaffoldKey);
       return false;
     }
-       
-    if (_frwhController.text==""){
-       SnackBarUtil.showSnackBar('From Warehouse is require...',_scaffoldKey);
+
+    if (_qtyController.text == "") {
+      SnackBarUtil.showSnackBar('Invalid qty...', _scaffoldKey);
       return false;
     }
-    if (_towhController.text==""){
-      SnackBarUtil.showSnackBar('To Warehouse is require...',_scaffoldKey);
+
+    if (_frwhController.text == "") {
+      SnackBarUtil.showSnackBar('From Warehouse is require...', _scaffoldKey);
+      return false;
+    }
+    if (_towhController.text == "") {
+      SnackBarUtil.showSnackBar('To Warehouse is require...', _scaffoldKey);
       return false;
     }
     return true;
   }
-  
-  void saveRelocate(){
-    if (!validateInputs())
-      return;
-     setSaveButtonState(true);    
-     testReceive(_docId).then((msg) {
-       SnackBarUtil.showSnackBar(msg,_scaffoldKey);
-       resetForm(); 
-       setSaveButtonState(false);
-     },
-     onError: (e){
-        SnackBarUtil.showSnackBar("Error receiving...",_scaffoldKey);
-        setSaveButtonState(false);
-     });     
-   
-  }
 
-  setSaveButtonState(bool posting){
-    setState(() {
-        isPosting = posting;
+  void saveRelocate() {
+    if (!validateInputs()) return;
+    setSaveButtonState(true);
+    postReceive(_docId).then((msg) {
+      SnackBarUtil.showSnackBar(msg, _scaffoldKey);
+      resetForm();
+      setSaveButtonState(false);
+    }, onError: (e) {
+      SnackBarUtil.showSnackBar("Error receiving...", _scaffoldKey);
+      setSaveButtonState(false);
     });
   }
 
-   Future<String> testReceive(String id) async{
-     var msg =await repo.postReceive(id);
-     return msg;
-  }
-
-  
-  void resetForm(){
-    setState(() {
-        _partController.text="";
-        _cartonController.text ="";
-        _frwhController.text ="";
-        _towhController.text ="";
-        _qtyController.text ="";
-        _refController.text ="";
-        barcode ="";
-        _docId ="";        
+  void saveReject() {
+    if (!validateReject()) return;
+    setSaveButtonState(true);
+    postReject(_docId,_rejectController.text).then((msg) {
+      SnackBarUtil.showSnackBar(msg, _scaffoldKey);
+      resetForm();
+      setSaveButtonState(false);
+    }, onError: (e) {
+      SnackBarUtil.showSnackBar("Error rejecting...", _scaffoldKey);
+      setSaveButtonState(false);
     });
   }
- 
+
+  setSaveButtonState(bool posting) {
+    setState(() {
+      isPosting = posting;
+    });
+  }
+
+  Future<String> postReceive(String id) async {
+    var msg = "";
+     try{
+       msg = await repo.postReceive(id);
+     }catch(e){
+       msg=e.toString();
+     }
+    return msg;
+  }
+
+  Future<String> postReject(String id,String reason) async {
+    var msg = "";
+     try{
+       Reject reject = new Reject(id: int.parse(id),reason:reason);
+       msg = await repo.postReject(reject);
+     }catch(e){
+       msg=e.toString();
+     }
+    return msg;
+  }
+
+  void resetForm() {
+    setState(() {
+      _partController.text = "";
+      _cartonController.text = "";
+      _frwhController.text = "";
+      _towhController.text = "";
+      _qtyController.text = "";
+      _refController.text = "";
+      _rejectController.text ="";
+      barcode = "";
+      _docId = "";
+    });
+  }
 }

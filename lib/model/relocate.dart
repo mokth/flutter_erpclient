@@ -3,8 +3,8 @@ class Relocate {
   final String icode;
   final String idesc;
   final int packsize;
-  final int qty;
-  final int stdqty;
+  final double qty;
+  final double stdqty;
   final String fromwh;
   final String towh;
   final String userid;
@@ -13,9 +13,8 @@ class Relocate {
   final String qrcoderef;
 
   Relocate(
-      {
-       this.id, 
-       this.icode,
+      {this.id,
+      this.icode,
       this.idesc,
       this.packsize,
       this.qty,
@@ -39,22 +38,22 @@ class Relocate {
         'towh': instance.towh,
         'userid': userid,
         'status': instance.status,
-        'qrcoderef':instance.qrcoderef,
+        'qrcoderef': instance.qrcoderef,
         'trxdate': instance.trxdate.toIso8601String()
       };
 
   factory Relocate.fromJson(Map<String, dynamic> json) {
     return Relocate(
-      id:json['id'],
+      id: json['id'],
       trxdate: DateTime.parse(json['trxdate']),
       icode: json['icode'] as String,
-      idesc: (json['idesc']==null)?"": json['idesc']as String,
+      idesc: (json['idesc'] == null) ? "" : json['idesc'] as String,
       packsize: json['packsize'],
       qty: json['qty'],
       stdqty: json['stdqty'],
       fromwh: json["fromwh"] as String,
       towh: json["towh"] as String,
-      qrcoderef:(json['qrcoderef']==null)?"": json['qrcoderef']as String,
+      qrcoderef: (json['qrcoderef'] == null) ? "" : json['qrcoderef'] as String,
       status: json["status"] as String,
     );
   }
