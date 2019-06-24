@@ -357,27 +357,33 @@ class _RelocateState extends State<RelocateEntry>
 
   void extractBarcode(String result) {
     List<String> arr = result.split('\n');
+    String prefix;
     for (int i = 0; i < arr.length; i++) {
       List<String> text = arr[i].split(':');
-      print(text[1].trim());
-      switch (i) {
-        case 0:
-          _partname = text[1].trim();
-          break;
-        case 7:
-          _partController.text = text[1].trim();
-          break;
-        case 6:
-          _cartonController.text = text[1].trim();
-          break;
-        default:
-          break;
+      prefix=text[0].trim().toUpperCase();
+      print(prefix);
+      if (prefix=="PART NAME"){
+         _partname = text[1].trim();
       }
-    }
-    // arr.map((str){
-    //     List<String> text = str.split(':');
-    //     print(text[1]);
-    // });
+      else  if (prefix=="MYTECH P/N"){
+         _partController.text = text[1].trim();
+      }else if (prefix=="QTY/CTN"){
+         _cartonController.text = text[1].trim();
+      }
+      // switch (i) {
+      //   case 0:
+      //     _partname = text[1].trim();
+      //     break;
+      //   case 7:
+      //     _partController.text = text[1].trim();
+      //     break;
+      //   case 6:
+      //     _cartonController.text = text[1].trim();
+      //     break;
+      //   default:
+      //     break;
+      // }
+    }   
   }
 
   bool validateInputs() {
