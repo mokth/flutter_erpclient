@@ -14,10 +14,12 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _urlController = TextEditingController();
+  final _whController = TextEditingController();
   final DataHelperSingleton _datahlp = DataHelperSingleton.getInstance();
   AuthenticationBloc authenticationBloc;
   List<Setting> _setts;
   Setting _setting;
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +29,8 @@ class _SettingPageState extends State<SettingPage> {
       if (_setts.length>0){
          _setting = _setts[0]; 
          print("found seting "+_setting.url);
-         _urlController.text= _setting.url;
+         _urlController.text = _setting.url;
+         _whController.text = _setting.defwh;
       }else {
         //test only
         _urlController.text="http://10.1.8.15/erpapi/api/";
@@ -44,7 +47,7 @@ class _SettingPageState extends State<SettingPage> {
         title: Text('Settings'),
       ),
       body: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(color: Colors.white),
@@ -58,6 +61,15 @@ class _SettingPageState extends State<SettingPage> {
                   filled: true,
                   fillColor: Colors.white),
               controller: _urlController,
+            ),
+            Divider(),
+             TextFormField(
+              enabled: true,
+              decoration: InputDecoration(
+                  labelText: 'DEFAULT WAREHOUSE',
+                  filled: true,
+                  fillColor: Colors.white),
+              controller: _whController,
             ),
             Divider(),
             actionButtons(),
@@ -113,6 +125,7 @@ class _SettingPageState extends State<SettingPage> {
     }
     try{
      _setting.url = _urlController.text.trim().toLowerCase();
+     _setting.defwh = _whController.text.trim().toUpperCase();
      if(isAddMode){
        _setting.id=0;
       await _datahlp.insertSetting(_setting);

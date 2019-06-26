@@ -10,6 +10,7 @@ class SettingBean  {
 
   final IntField id = new IntField('_id');
   final StrField url = new StrField('url');
+  final StrField wh = new StrField('wh');
 
   String get tableName => 'settings';
 
@@ -49,7 +50,8 @@ class SettingBean  {
   Future<Null> createTable() async {
     final st = new Create(tableName, ifNotExists: true)
         .addInt('_id', primary: true,autoIncrement: true)
-        .addStr('url', isNullable: true);
+        .addStr('url', isNullable: true)
+        .addStr('wh', isNullable: true);
     try {
       await getAdapter();
       await this._adapter.connect();
@@ -66,6 +68,7 @@ class SettingBean  {
 
     inserter.set(id, setting.id);
     inserter.set(url, setting.url);
+    inserter.set(wh, setting.defwh);
     try {
       await getAdapter();
        await this._adapter.connect();
@@ -79,11 +82,12 @@ class SettingBean  {
   }
 
   /// Updates a sett
-  Future update(int id, String url) async {
+  Future update(int id, String url,String defWh) async {
     Update updater = new Update(tableName);
     updater.where(this.id.eq(id));
 
     updater.set(this.url, url);
+    updater.set(this.wh, defWh);
     try {
       await getAdapter();
       await this._adapter.connect();
@@ -107,6 +111,7 @@ class SettingBean  {
       Map map = await this._adapter.findOne(updater);
       sett.id = map['_id'];
       sett.url = map['url'];
+      sett.defwh = map['wh'];
     } catch (e) {
       print(e.toString());
     } finally {
@@ -129,6 +134,7 @@ class SettingBean  {
 
         sett.id = map['_id'];
         sett.url = map['url'];
+        sett.defwh = map['wh'];
         setts.add(sett);
       }
     } catch (e) {

@@ -1,4 +1,6 @@
 
+import 'package:erpclient/base/datahelper.dart';
+import 'package:erpclient/model/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
@@ -32,7 +34,7 @@ class _RelocateState extends State<RelocateEntry>
   final _frwhController = TextEditingController();
   final _towhController = TextEditingController();
   
-
+  final DataHelperSingleton _datahlp = DataHelperSingleton.getInstance();
   ScopedLookup<Warehouse> scopefrwh;
   ScopedLookup<Warehouse> scopetowh;
   String barcode = "";
@@ -44,11 +46,25 @@ class _RelocateState extends State<RelocateEntry>
   int _cartonPackSize;
   double _totalQty;
   bool _editMode;
+  bool _dontPop=false;
+
+  List<Setting> _setts;
+  Setting _setting;
+  String defWarehouse="";
 
   @override
   void initState() {
     super.initState();
-   
+     _datahlp.getSettings().then((val) {
+      _setts =val;
+      if (_setts.length>0){
+        _dontPop =true;
+         _setting = _setts[0]; 
+          defWarehouse = _setting.defwh;
+          _frwhController.text = _setting.defwh;
+        }        
+      });
+
     _editMode = widget.editmode == "EDIT";
     if (_editMode) {
       _relocate = widget.relocate;
@@ -88,7 +104,10 @@ class _RelocateState extends State<RelocateEntry>
 
   onFrWhCodeChanged() {
     _frwhController.addListener(() {
-      if (_frwhController.text != "") Navigator.pop(context);
+      if (_frwhController.text != ""){
+       if (!_dontPop)
+          Navigator.pop(context);
+       }else _dontPop =false;
     });
   }
 
@@ -497,7 +516,8 @@ class _RelocateState extends State<RelocateEntry>
     setState(() {
       _partController.text = "";
       _cartonController.text = "";
-      _frwhController.text = "";
+      _dontPop =true;
+      _frwhController.text = _setting.defwh;
       _towhController.text = "";
       _qtyController.text = "";
       _recqtyController.text = "";

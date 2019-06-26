@@ -23,7 +23,7 @@ class DataHelperSingleton {
   }
 
    Future updateSetting(Setting setting) async {
-      await _settingBean.update(setting.id, setting.url);
+      await _settingBean.update(setting.id, setting.url,setting.defwh);
       this.APIURL = setting.url; 
   }
 
