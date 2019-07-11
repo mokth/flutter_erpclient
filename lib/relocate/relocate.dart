@@ -104,6 +104,7 @@ class _RelocateState extends State<RelocateEntry>
 
   onFrWhCodeChanged() {
     _frwhController.addListener(() {
+      print(!_dontPop);
       if (_frwhController.text != ""){
        if (!_dontPop)
           Navigator.pop(context);
@@ -326,6 +327,7 @@ class _RelocateState extends State<RelocateEntry>
   }
 
   showfrWhLookup() {
+    _dontPop =false;
     WHouseLookupDialog.showWarehouse(context, scopefrwh, _warehouses);
   }
 

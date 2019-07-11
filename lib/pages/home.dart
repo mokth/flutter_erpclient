@@ -4,7 +4,6 @@ import 'package:connectivity/connectivity.dart';
 import 'package:erpclient/pages/Settings/setting.dart';
 import 'package:erpclient/relocate/barcode-scan.dart';
 import 'package:erpclient/relocate/receive-list.dart';
-import 'package:erpclient/relocate/stock-balance.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -13,10 +12,11 @@ import 'package:erpclient/blog/auth/authbloc.dart';
 import 'package:erpclient/model/user.dart';
 import 'package:erpclient/base/customroute.dart';
 import 'package:erpclient/relocate/relocate-list.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
-  final AuthenticationBloc authenticationBloc;
-  HomePage(this.authenticationBloc, {Key key}) : super(key: key);
+  //final AuthenticationBloc authenticationBloc;
+  HomePage({Key key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -44,8 +44,8 @@ class _HomePageState extends State<HomePage> {
         checkConnection().then((val) => setState(() {}));
       });
     });
-
-    authenticationBloc = widget.authenticationBloc;
+    //get bloc from Parent
+    authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     _user = this.authenticationBloc.userRepository.getAuthUserInfo();
     if (_user != null) {
       _usrImgae = "admin/images/" +
@@ -126,9 +126,11 @@ class _HomePageState extends State<HomePage> {
             ),
             FadeAnimatedTextKit(
                 onTap: () {},
-                text: ["WINCOM", "WINCOM SOLUTION","WINCOM ERP SYSTEM"],
-                textStyle:
-                    TextStyle(fontSize: 24.0,fontFamily: 'OpenSans',fontWeight: FontWeight.bold),
+                text: ["WINCOM", "WINCOM SOLUTION", "WINCOM ERP SYSTEM"],
+                textStyle: TextStyle(
+                    fontSize: 24.0,
+                    fontFamily: 'OpenSans',
+                    fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
                 alignment: AlignmentDirectional.center // or Alignment.topLeft
                 ),

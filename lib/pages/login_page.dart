@@ -31,6 +31,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
+    //get bloc from Parent
     _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     _loginBloc = LoginBloc(
       userRepository: _userRepository,
@@ -62,7 +63,6 @@ class _LoginPageState extends State<LoginPage>
           opacity: animation,
           child: Center(
             child: LoginForm(
-              authenticationBloc: _authenticationBloc,
               loginBloc: _loginBloc,
             ),
           ),

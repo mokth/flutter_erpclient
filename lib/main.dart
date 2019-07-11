@@ -1,7 +1,5 @@
-import 'package:erpclient/pages/Settings/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bloc/bloc.dart';
 
 import 'package:erpclient/pages/home.dart';
 import 'package:erpclient/pages/loading_indicator.dart';
@@ -13,17 +11,17 @@ import 'base/datahelper.dart';
 import 'blog/auth/authbloc.dart';
 import 'blog/auth/authevent.dart';
 import 'blog/auth/authstate.dart';
-import 'model/setting.dart';
 
-class SimpleBlocDelegate extends BlocDelegate {
-  @override
-  void onTransition(Transition transition) {
-    // print("transition : "+ transition.toString());
-  }
-}
+
+// class SimpleBlocDelegate extends BlocDelegate {
+//   @override
+//   void onTransition(Transition transition) {
+//     // print("transition : "+ transition.toString());
+//   }
+// }
 
 void main() async {
-  BlocSupervisor().delegate = SimpleBlocDelegate();
+  //BlocSupervisor().delegate = SimpleBlocDelegate();
   DataHelperSingleton datahlp = DataHelperSingleton.getInstance();
   await datahlp.iniSettingDB();  
   runApp(App(userRepository: UserRepository()));  
@@ -41,13 +39,13 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   AuthenticationBloc authenticationBloc;
   UserRepository get userRepository => widget.userRepository;
-  final DataHelperSingleton _datahlp = DataHelperSingleton.getInstance();
-  bool _noSetting = false;
+  //final DataHelperSingleton _datahlp = DataHelperSingleton.getInstance();
+  //bool _noSetting = false;
 
   @override
   void initState() {
     authenticationBloc = AuthenticationBloc(userRepository: userRepository);
-    authenticationBloc.dispatch(AppStarted());    
+    //authenticationBloc.dispatch(AppStarted());    
     super.initState();
   }
 
@@ -60,6 +58,11 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    //this BLoC is global and unique for the whole application
+    //this BLoC will be available from EVERYWHERE in the application 
+    //since it will be an ancestor of almost all widgets.
+    // use this to acces this Bloc from children
+    //    BlocProvider.of<AuthenticationBloc>(context);
     return BlocProvider<AuthenticationBloc>(
       bloc: authenticationBloc,
       child: MaterialApp(
@@ -69,12 +72,12 @@ class _AppState extends State<App> {
           builder: (BuildContext context, AuthenticationState state) {
             print("main loop ==> " + state.toString());
             if (state is AuthenticationUninitialized) {
-              return SplashPage(authenticationBloc);
+              return SplashPage();//authenticationBloc);
             }
             if (state is AuthenticationAuthenticated) {
               if (!userRepository.isAuthenticated())
                return LoginPage(userRepository: userRepository);
-              return HomePage(authenticationBloc);
+              return HomePage();
             }
 
             if (state is AuthenticationUnauthenticated) {

@@ -32,9 +32,9 @@ class _SettingPageState extends State<SettingPage> {
          _urlController.text = _setting.url;
          _whController.text = _setting.defwh;
       }else {
-        //test only
-        _urlController.text="http://10.1.8.15/erpapi/api/";
-        //_urlController.text="http://wincom2cloud.com/mytechapi/api/api/";
+        //test only        
+        _urlController.text="http://10.1.8.15/erpapi_prod/api/";
+        //_urlController.text="http://wincom2cloud.com/mytechapi/api/";
         print("NOT found seting ");
       }
     });

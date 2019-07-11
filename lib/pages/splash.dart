@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:erpclient/blog/auth/authbloc.dart';
 import 'package:erpclient/blog/auth/authevent.dart';
 import 'package:erpclient/pages/showup.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SplashPage extends StatefulWidget {
-  final AuthenticationBloc bloc;
-  SplashPage(this.bloc);
+  //final AuthenticationBloc bloc;
+  SplashPage();//this.bloc);
 
   @override
   State<SplashPage> createState() => _SplashPageState();
@@ -15,11 +16,12 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
-
+  AuthenticationBloc bloc; 
   @override
   void initState() {
     super.initState();
-
+    //get bloc from Parent
+    bloc = BlocProvider.of<AuthenticationBloc>(context); 
     controller = AnimationController(
         duration: const Duration(milliseconds: 3000), vsync: this);
     animation = CurvedAnimation(parent: controller, curve: Curves.easeIn);
@@ -28,7 +30,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        widget.bloc.dispatch(CheckAuth());
+        bloc.dispatch(CheckAuth());
       }
     });
   }
