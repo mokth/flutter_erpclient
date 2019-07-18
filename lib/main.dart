@@ -12,7 +12,6 @@ import 'blog/auth/authbloc.dart';
 import 'blog/auth/authevent.dart';
 import 'blog/auth/authstate.dart';
 
-
 // class SimpleBlocDelegate extends BlocDelegate {
 //   @override
 //   void onTransition(Transition transition) {
@@ -23,8 +22,8 @@ import 'blog/auth/authstate.dart';
 void main() async {
   //BlocSupervisor().delegate = SimpleBlocDelegate();
   DataHelperSingleton datahlp = DataHelperSingleton.getInstance();
-  await datahlp.iniSettingDB();  
-  runApp(App(userRepository: UserRepository()));  
+  await datahlp.iniSettingDB();
+  runApp(App(userRepository: UserRepository()));
 }
 
 class App extends StatefulWidget {
@@ -45,38 +44,44 @@ class _AppState extends State<App> {
   @override
   void initState() {
     authenticationBloc = AuthenticationBloc(userRepository: userRepository);
-    //authenticationBloc.dispatch(AppStarted());    
+    //authenticationBloc.dispatch(AppStarted());
     super.initState();
   }
 
   @override
   void dispose() {
     authenticationBloc.dispose();
-   
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     //this BLoC is global and unique for the whole application
-    //this BLoC will be available from EVERYWHERE in the application 
+    //this BLoC will be available from EVERYWHERE in the application
     //since it will be an ancestor of almost all widgets.
     // use this to acces this Bloc from children
     //    BlocProvider.of<AuthenticationBloc>(context);
     return BlocProvider<AuthenticationBloc>(
       bloc: authenticationBloc,
       child: MaterialApp(
-        debugShowCheckedModeBanner:false,
+        theme: ThemeData(
+          fontFamily: 'OpenSans',
+          brightness: Brightness.light,
+          primaryColor: Color(0xff003c7e),
+          accentColor: Color(0xff4487c7),          
+        ),
+        debugShowCheckedModeBanner: false,
         home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
           bloc: authenticationBloc,
           builder: (BuildContext context, AuthenticationState state) {
             print("main loop ==> " + state.toString());
             if (state is AuthenticationUninitialized) {
-              return SplashPage();//authenticationBloc);
+              return SplashPage(); //authenticationBloc);
             }
             if (state is AuthenticationAuthenticated) {
               if (!userRepository.isAuthenticated())
-               return LoginPage(userRepository: userRepository);
+                return LoginPage(userRepository: userRepository);
               return HomePage();
             }
 

@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import '../model/prschmasfg.dart';
 import '../utilities/snackbarutil.dart';
 import '../base/customroute.dart';
-import '../relocate/relocate.dart';
 import '../utilities/displayutil.dart';
 import '../utilities/util.dart';
 import '../repository/inventoryrepo.dart';
-import '../model/relocate.dart';
+import 'finished-good.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
 
-class RelocateList extends StatefulWidget {
-  RelocateList({Key key}) : super(key: key);
+class FinishedGoodList extends StatefulWidget {
+  FinishedGoodList({Key key}) : super(key: key);
 
-  _RelocateListState createState() => _RelocateListState();
+  _FinishedGoodListState createState() => _FinishedGoodListState();
 }
 
-class _RelocateListState extends State<RelocateList> {
+class _FinishedGoodListState extends State<FinishedGoodList> {
   final InventoryRepository _repo = new InventoryRepository();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
@@ -35,7 +35,7 @@ class _RelocateListState extends State<RelocateList> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Issue List'),
+        title: Text('Finished Goods List'),
       ),
       floatingActionButton: (!_dataAvailable)
           ? Text('')
@@ -45,7 +45,7 @@ class _RelocateListState extends State<RelocateList> {
                 Navigator.push(
                   context,
                   new CustomRoute(
-                      builder: (context) => RelocateEntry(null, "NEW")),
+                      builder: (context) => FinishedGood(null, "NEW")),
                 );
               },
               backgroundColor: Colors.pinkAccent,
@@ -57,8 +57,8 @@ class _RelocateListState extends State<RelocateList> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(color: Colors.white),
         child: FutureBuilder(
-            initialData: new List<Relocate>(),
-            future: _repo.getRelocates(),
+            initialData: new List<PrSchMasFG>(),
+            future: _repo.getFinishedGoods(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
@@ -71,8 +71,15 @@ class _RelocateListState extends State<RelocateList> {
                   ));
                 default:
                   if (snapshot.hasError)
-                    return new Center(child:Text('${snapshot.error}',
-                    style: TextStyle(color: Colors.redAccent,fontStyle: FontStyle.italic,fontSize: 18.0),),);
+                    return new Center(
+                      child: Text(
+                        '${snapshot.error}',
+                        style: TextStyle(
+                            color: Colors.redAccent,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 18.0),
+                      ),
+                    );
                   else
                     return createListView(context, snapshot);
               }
@@ -85,22 +92,22 @@ class _RelocateListState extends State<RelocateList> {
     // setState(() {
     //   _dataAvailable =true;
     // });
-    List<Relocate> relocates = snapshot.data as List<Relocate>;
+    List<PrSchMasFG> fnGood = snapshot.data as List<PrSchMasFG>;
     return AnimatedList(
         key: _listKey,
-        initialItemCount: relocates.length,
+        initialItemCount: fnGood.length,
         itemBuilder: (BuildContext context, int index, animation) {
-          return listItem(relocates[index], index, animation);
+          return listItem(fnGood[index], index, animation);
         });
 
     // return ListView.builder(
-    //     itemCount: relocates.length,
+    //     itemCount: fnGood.length,
     //     itemBuilder: (BuildContext context, int index) {
-    //       return listItem(relocates[index], index);
+    //       return listItem(fnGood[index], index);
     //     });
   }
 
-  Widget listItem(Relocate item, int index, Animation animation) {
+  Widget listItem(PrSchMasFG item, int index, Animation animation) {
     return SizeTransition(
       sizeFactor: animation,
       child: Slidable(
@@ -117,22 +124,54 @@ class _RelocateListState extends State<RelocateList> {
               Row(
                 children: <Widget>[
                   Expanded(
-                      flex: 4,
+                      flex: 2,
                       child: DisplayUtil.listItemText(
-                          Utility.dateToStringWithTime(item.trxdate),
+                          Utility.dateToString(item.trxDate),
                           fontSize: 14.0)),
                   Expanded(
-                      flex: 2,
-                      child: DisplayUtil.listItemText(item.qrcoderef==null?"":item.qrcoderef,
-                          fontSize:14.0)),
+                    flex: 4,
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        child: DisplayUtil.listItemText(
+                            item.scheCode + "/" + item.relNo.toString(),
+                            fontSize: 14.0)),
+                  ),
                   Expanded(
                       flex: 2,
-                      child:
-                          DisplayUtil.listItemText(item.fromwh, fontSize: 13.0,textAlign: TextAlign.right)),
+                      child: DisplayUtil.listItemText(item.frWH,
+                          fontSize: 13.0, textAlign: TextAlign.left)),
                   Expanded(
                       flex: 2,
-                      child: DisplayUtil.listItemText(item.stdqty.toString()+" PC",
-                          fontSize: 14.0,textAlign: TextAlign.right)),
+                      child: DisplayUtil.listItemText(item.fgQty.toString(),
+                          fontSize: 14.0,
+                          textAlign: TextAlign.right,
+                          fontWeight: FontWeight.bold)),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                      flex: 2,
+                      child: DisplayUtil.listItemText(
+                          Utility.dateToTimeString(item.trxDate),
+                          fontSize: 12.0)),
+                  Expanded(
+                    flex: 4,
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        child: DisplayUtil.listItemText(item.icode,
+                            fontSize: 14.0,fontWeight: FontWeight.bold)),
+                  ),
+                  Expanded(
+                      flex: 2,
+                      child: DisplayUtil.listItemText(item.toWH,
+                          fontSize: 13.0, textAlign: TextAlign.left)),
+                  Expanded(
+                      flex: 2,
+                      child: DisplayUtil.listItemText(item.reject.toString(),
+                          fontSize: 14.0,
+                          textAlign: TextAlign.right,
+                          color: Colors.red)),
                 ],
               ),
               Row(
@@ -140,26 +179,13 @@ class _RelocateListState extends State<RelocateList> {
                   Expanded(
                       flex: 3,
                       child:
-                          DisplayUtil.listItemText(item.icode, fontSize: 14.0)),
+                          DisplayUtil.listItemText(item.idesc, fontSize: 13.0)),
                   Expanded(
                       flex: 1,
-                      child: DisplayUtil.listItemText(item.towh, fontSize: 13.0,textAlign: TextAlign.right)),
-                  Expanded(
-                      flex: 1,
-                      child: DisplayUtil.listItemText(item.qty.toString()+" CT",
-                          fontSize: 14.0,textAlign: TextAlign.right)),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                     flex: 3,
-                      child:
-                          DisplayUtil.listItemText(item.idesc, fontSize: 14.0)),
-                   Expanded(
-                      flex: 1,
-                      child: DisplayUtil.listItemText(item.stdqty.toString()+" PC",
-                          fontSize: 14.0,textAlign: TextAlign.right)),
+                      child: DisplayUtil.listItemText(item.scrap.toString(),
+                          fontSize: 14.0,
+                          textAlign: TextAlign.right,
+                          color: Colors.red)),
                 ],
               ),
               Divider(
@@ -177,7 +203,7 @@ class _RelocateListState extends State<RelocateList> {
                 Navigator.push(
                   context,
                   new CustomRoute(
-                      builder: (context) => RelocateEntry(item, "EDIT")),
+                      builder: (context) => FinishedGood(item, "EDIT")),
                 );
               }),
         ],
@@ -194,14 +220,14 @@ class _RelocateListState extends State<RelocateList> {
     );
   }
 
-  deleteIem(Relocate item) {
+  deleteIem(PrSchMasFG item) {
     _asyncConfirmDialog(context).then((val) {
       if (val == ConfirmAction.ACCEPT) {
-        _repo.deleteRelocate(item.id).then((resp) {
+        _repo.deleteFinishedGood(item.uid).then((resp) {
           setState(() {});
         }, onError: (e) {
           print(e.toString());
-          SnackBarUtil.showSnackBar("Error deleting record...",_scaffoldKey);
+          SnackBarUtil.showSnackBar("Error deleting record...", _scaffoldKey);
         });
       }
     });

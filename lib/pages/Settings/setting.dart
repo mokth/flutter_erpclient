@@ -1,7 +1,7 @@
-import 'package:erpclient/base/datahelper.dart';
-import 'package:erpclient/blog/auth/authbloc.dart';
-import 'package:erpclient/blog/auth/authevent.dart';
-import 'package:erpclient/model/setting.dart';
+import '../../base/datahelper.dart';
+import '../../blog/auth/authbloc.dart';
+import '../../blog/auth/authevent.dart';
+import '../../model/setting.dart';
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatefulWidget {
@@ -33,8 +33,10 @@ class _SettingPageState extends State<SettingPage> {
          _whController.text = _setting.defwh;
       }else {
         //test only        
-        _urlController.text="http://10.1.8.15/erpapi_prod/api/";
-        //_urlController.text="http://wincom2cloud.com/mytechapi/api/";
+        //_urlController.text= "http://localhost:50383/api/";
+
+        //_urlController.text="http://10.1.8.15/erpapi_prod/api/";
+        _urlController.text="http://wincom2cloud.com/mytechapi/api/";
         print("NOT found seting ");
       }
     });

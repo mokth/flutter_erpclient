@@ -1,8 +1,9 @@
-import 'package:erpclient/base/apibase.dart';
-import 'package:erpclient/model/user.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../model/user.dart';
+import '../base/apibase.dart';
 
 class UserRepository extends ApiBase {
   String authToken = "";

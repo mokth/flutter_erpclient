@@ -1,11 +1,12 @@
-import 'package:erpclient/model/qtybalance.dart';
-import 'package:erpclient/repository/inventoryrepo.dart';
-import 'package:erpclient/utilities/displayutil.dart';
-import 'package:erpclient/utilities/util.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+
+import '../model/qtybalance.dart';
+import '../repository/inventoryrepo.dart';
+import '../utilities/displayutil.dart';
+import '../utilities/util.dart';
 
 
 class StockBalance extends StatefulWidget {

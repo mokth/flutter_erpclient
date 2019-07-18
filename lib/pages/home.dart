@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:connectivity/connectivity.dart';
-import 'package:erpclient/pages/Settings/setting.dart';
-import 'package:erpclient/relocate/barcode-scan.dart';
-import 'package:erpclient/relocate/receive-list.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
-import 'package:erpclient/blog/auth/authevent.dart';
-import 'package:erpclient/blog/auth/authbloc.dart';
-import 'package:erpclient/model/user.dart';
-import 'package:erpclient/base/customroute.dart';
-import 'package:erpclient/relocate/relocate-list.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../work-order.dart/finished-good-list.dart';
+import '../pages/Settings/setting.dart';
+import '../relocate/barcode-scan.dart';
+import '../relocate/receive-list.dart';
+import '../blog/auth/authevent.dart';
+import '../blog/auth/authbloc.dart';
+import '../model/user.dart';
+import '../base/customroute.dart';
+import '../relocate/relocate-list.dart';
 
 class HomePage extends StatefulWidget {
   //final AuthenticationBloc authenticationBloc;
@@ -231,6 +232,13 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   new CustomRoute(builder: (context) => new ReceiveList()),
+                );
+              }),
+              Divider(),
+              menuItem('Finished Good', () {
+                Navigator.push(
+                  context,
+                  new CustomRoute(builder: (context) => new FinishedGoodList()),
                 );
               }),
               Divider(),

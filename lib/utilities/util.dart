@@ -5,10 +5,17 @@ class Utility {
   
   static String dateToString(DateTime date){
     if(date==null) return "";
-    String month = date.month.toString().padLeft(2, '0');
-    String year = date.year.toString().padLeft(4, '0');
-    String day = date.day.toString().padLeft(2, '0');
-    return  day + "-" + month + "-" + year;
+    // String month = date.month.toString().padLeft(2, '0');
+    // String year = date.year.toString().padLeft(4, '0');
+    // String day = date.day.toString().padLeft(2, '0');
+    // return  day + "-" + month + "-" + year;
+    return new DateFormat("dd-MM-yyyy").format(date);
+  }
+
+  static String dateToTimeString(DateTime date){
+    if(date==null) return "";
+    
+    return new DateFormat("hh:mma").format(date);
   }
 
    static String dateToStringWithTime(DateTime date){

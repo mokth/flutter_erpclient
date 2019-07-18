@@ -1,19 +1,18 @@
-
-import 'package:erpclient/base/datahelper.dart';
-import 'package:erpclient/model/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
-import 'package:erpclient/lookup/lookup-scoremodel.dart';
-import 'package:erpclient/lookup/whlookup.dart';
-import 'package:erpclient/model/relocate.dart';
-import 'package:erpclient/model/warehouse.dart';
-import 'package:erpclient/repository/inventoryrepo.dart';
-import 'package:erpclient/utilities/button-util.dart';
-import 'package:erpclient/utilities/snackbarutil.dart';
-import 'package:erpclient/utilities/textstyle-util.dart';
+import '../base/datahelper.dart';
+import '../model/setting.dart';
+import '../lookup/lookup-scoremodel.dart';
+import '../lookup/whlookup.dart';
+import '../model/relocate.dart';
+import '../model/warehouse.dart';
+import '../repository/inventoryrepo.dart';
+import '../utilities/button-util.dart';
+import '../utilities/snackbarutil.dart';
+import '../utilities/textstyle-util.dart';
 
 class RelocateEntry extends StatefulWidget {
   final Relocate relocate;
@@ -307,7 +306,7 @@ class _RelocateState extends State<RelocateEntry>
       child: Row(children: <Widget>[
         Expanded(
           child: ButtonUtil.getRaiseButton(
-              saveRelocate, "Save", Color(0xff5DADE2)),
+              saveRelocate, "Save", Theme.of(context).primaryColor),
         ),
         Text(' '),
         Expanded(

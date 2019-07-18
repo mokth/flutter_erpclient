@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-import 'package:erpclient/relocate/receive.dart';
-import 'package:erpclient/base/customroute.dart';
-import 'package:erpclient/utilities/displayutil.dart';
-import 'package:erpclient/utilities/util.dart';
-import 'package:erpclient/repository/inventoryrepo.dart';
-import 'package:erpclient/model/relocate.dart';
+import '../relocate/receive.dart';
+import '../base/customroute.dart';
+import '../utilities/displayutil.dart';
+import '../utilities/util.dart';
+import '../repository/inventoryrepo.dart';
+import '../model/relocate.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
 

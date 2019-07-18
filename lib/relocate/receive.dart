@@ -1,14 +1,15 @@
-import 'package:erpclient/model/reject.dart';
+import 'package:erpclient/utilities/button-util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
-import 'package:erpclient/utilities/button-util.dart';
-import 'package:erpclient/utilities/snackbarutil.dart';
-import 'package:erpclient/utilities/textstyle-util.dart';
-import 'package:erpclient/repository/inventoryrepo.dart';
+import '../model/reject.dart';
+import '../utilities/snackbarutil.dart';
+import '../utilities/textstyle-util.dart';
+import '../repository/inventoryrepo.dart';
+import '../utilities/button-util.dart';
 
 class ReceiveEmtry extends StatefulWidget {
   ReceiveEmtry({Key key}) : super(key: key);
@@ -154,7 +155,7 @@ class _RelocateState extends State<ReceiveEmtry> {
               "Receive",
               (isPosting)
                   ? Theme.of(context).disabledColor
-                  : Color(0xff5DADE2)),
+                  : Theme.of(context).primaryColor),
         ),
         Text(' '),
         Expanded(
