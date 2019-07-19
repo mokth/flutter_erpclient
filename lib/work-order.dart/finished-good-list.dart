@@ -124,24 +124,22 @@ class _FinishedGoodListState extends State<FinishedGoodList> {
               Row(
                 children: <Widget>[
                   Expanded(
-                      flex: 2,
+                     flex:2 ,
                       child: DisplayUtil.listItemText(
-                          Utility.dateToString(item.trxDate),
+                          Utility.dateToStringFormat(item.trxDate,"dd-MM-yy"),
                           fontSize: 14.0)),
                   Expanded(
-                    flex: 4,
-                    child: Padding(
-                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                        child: DisplayUtil.listItemText(
+                    flex:4 ,
+                    child:  DisplayUtil.listItemText(
                             item.scheCode + "/" + item.relNo.toString(),
-                            fontSize: 14.0)),
+                            fontSize: 14.0),
                   ),
                   Expanded(
-                      flex: 2,
+                    flex:2 ,
                       child: DisplayUtil.listItemText(item.frWH,
                           fontSize: 13.0, textAlign: TextAlign.left)),
                   Expanded(
-                      flex: 2,
+                    flex:2 ,
                       child: DisplayUtil.listItemText(item.fgQty.toString(),
                           fontSize: 14.0,
                           textAlign: TextAlign.right,
@@ -157,10 +155,8 @@ class _FinishedGoodListState extends State<FinishedGoodList> {
                           fontSize: 12.0)),
                   Expanded(
                     flex: 4,
-                    child: Padding(
-                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                        child: DisplayUtil.listItemText(item.icode,
-                            fontSize: 14.0,fontWeight: FontWeight.bold)),
+                    child: DisplayUtil.listItemText(item.icode,
+                            fontSize: 14.0,fontWeight: FontWeight.bold),
                   ),
                   Expanded(
                       flex: 2,

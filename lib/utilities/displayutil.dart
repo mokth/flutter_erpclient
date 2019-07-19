@@ -28,6 +28,7 @@ class DisplayUtil {
       fontSize: 15.0}) {
     return Text(
       title,
+      maxLines: 1,
       textAlign: textAlign,
       style: TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color),
     );

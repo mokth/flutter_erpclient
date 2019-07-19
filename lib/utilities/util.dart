@@ -12,6 +12,11 @@ class Utility {
     return new DateFormat("dd-MM-yyyy").format(date);
   }
 
+  static String dateToStringFormat(DateTime date,String format ){
+    if(date==null) return "";
+    return new DateFormat(format).format(date);
+  }
+
   static String dateToTimeString(DateTime date){
     if(date==null) return "";
     

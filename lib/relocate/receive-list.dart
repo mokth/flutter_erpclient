@@ -116,18 +116,18 @@ class _ReceiveListState extends State<ReceiveList> {
               Row(
                 children: <Widget>[
                   Expanded(
-                      flex: 4,
+                      flex: 2,
                       child: DisplayUtil.listItemText(
-                          Utility.dateToStringWithTime(item.trxdate),
+                          Utility.dateToStringFormat(item.trxdate,"dd/MM/yy"),
                           fontSize: 14.0)),
                   Expanded(
-                      flex: 2,
+                      flex: 4,
                       child: DisplayUtil.listItemText(item.qrcoderef==null?"":item.qrcoderef,
-                          fontSize:14.0)),
+                          fontSize:14.0,fontWeight: FontWeight.bold)),
                   Expanded(
                       flex: 2,
                       child:
-                          DisplayUtil.listItemText(item.fromwh, fontSize: 13.0,textAlign: TextAlign.right)),
+                          DisplayUtil.listItemText(item.fromwh, fontSize: 13.0,textAlign: TextAlign.left)),
                   Expanded(
                       flex: 2,
                       child: DisplayUtil.listItemText(item.stdqty.toString()+" PC",
@@ -137,14 +137,19 @@ class _ReceiveListState extends State<ReceiveList> {
               Row(
                 children: <Widget>[
                   Expanded(
-                      flex: 3,
+                      flex: 2,
+                      child: DisplayUtil.listItemText(
+                          Utility.dateToStringFormat(item.trxdate,"hh:mma"),
+                          fontSize: 14.0)),
+                  Expanded(
+                      flex: 4,
                       child:
                           DisplayUtil.listItemText(item.icode, fontSize: 14.0)),
                   Expanded(
-                      flex: 1,
-                      child: DisplayUtil.listItemText(item.towh, fontSize: 13.0,textAlign: TextAlign.right)),
+                      flex: 2,
+                      child: DisplayUtil.listItemText(item.towh, fontSize: 13.0,textAlign: TextAlign.left)),
                   Expanded(
-                      flex: 1,
+                      flex: 2,
                       child: DisplayUtil.listItemText(item.qty.toString()+" CT",
                           fontSize: 14.0,textAlign: TextAlign.right)),
                 ],

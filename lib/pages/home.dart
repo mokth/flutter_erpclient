@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
           title: Row(
         children: <Widget>[
-          Expanded(child: Text('Moble ERP')),
+          Expanded(child: Text('Mobile ERP')),
           Icon((!hasConnection) ? Icons.signal_wifi_off : Icons.wifi,
               color: (!hasConnection) ? Colors.redAccent : Colors.white)
         ],
